@@ -118,7 +118,14 @@ class EmitirCertidaoJob implements ShouldQueue
         Log::info("✍️ Assinando PDF com certificado digital...");
         $nomeArquivoAssinar = $certidao->protocolo_solicitacao . '_' . $numeroMatricula . '_assinado.pdf';
 
+        $certificadoId = ONRConfiguracao::query()->first()->certificado_digital_id;
+
+        if (!$certificadoId) {
+            throw new \Exception("Certificado digital não encontrado");
+        }
+
         $certificado = new Certificado();
+        $certificado = $certificado->carregarCertificado($certificadoId);
         $assinador = new Assinador($certificado);
 
         try {
@@ -127,6 +134,7 @@ class EmitirCertidaoJob implements ShouldQueue
             Log::info("✅ PDF assinado com sucesso:", [
                 'arquivo_id' => $arquivoAssinado['id'] ?? null,
                 'nome_arquivo' => $arquivoAssinado['signedFile']['name'] ?? null,
+                'chave_formatada' => $arquivoAssinado['formattedKey'],
             ]);
         } catch (\Exception $e) {
             Log::error("❌ Erro na assinatura digital: " . $e->getMessage());
@@ -137,7 +145,10 @@ class EmitirCertidaoJob implements ShouldQueue
             'status_envio' => ONRStatusEnum::SIMULADA->value,
             'mensagem_erro_envio' => 'Emissão simulada em ambiente local',
             'processada_em' => now(),
-            'job_disparado_em' => now()
+            'job_disparado_em' => now(),
+            'onr_arquivo_assinado_web_id' => $arquivoAssinado['id'],
+            'chave_formatada' => $arquivoAssinado['formattedKey'],
+            'onr_nome_arquivo' => $arquivoAssinado['signedFile']['name'],
         ]);
 
         $this->atualizarStatusBatch(ONRStatusEnum::SIMULADA, 'Emissão simulada (ambiente local)', $solicitacaoDTO->protocoloSolicitacao);

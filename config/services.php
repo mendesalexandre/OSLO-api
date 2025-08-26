@@ -1,5 +1,7 @@
 <?php
 
+use Lacuna\RestPki\StandardSecurityContexts;
+
 return [
 
     /*
@@ -34,5 +36,11 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
+
+
+    'restpki' => [
+        'endpoint' => env('RESTPKI_ENDPOINT', 'https://assinador-web.onr.org.br/api'),
+    ]
+
 
 ];

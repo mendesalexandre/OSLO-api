@@ -2,8 +2,9 @@
 
 namespace App\Models\ONR;
 
+use App\Enums\ONRStatusEnum;
 use Illuminate\Database\Eloquent\Model;
-use ONRStatusEnum;
+
 
 class Certidao extends Model
 {
@@ -27,7 +28,7 @@ class Certidao extends Model
         'integrado_selo_codigo_atos',
         'integrado_selo_valor',
         'integrado_selo_data',
-        'integrador_selo_hora',
+        'integrado_selo_hora',
         'contraditorio_debug',
         'tipo_finalidade',
         'observacao',
@@ -82,6 +83,7 @@ class Certidao extends Model
         'devolvida_em',
         'status_validacao',
         'mensagem_validacao',
+        'chave_formatada'
     ];
 
     public function casts(): array

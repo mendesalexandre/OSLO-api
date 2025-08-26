@@ -2,6 +2,7 @@
 
 namespace App\Jobs\ONR\Certidao;
 
+use App\Enums\ONRStatusEnum;
 use Illuminate\Bus\Queueable;
 use App\Services\Api\Online\Online;
 use App\Services\Integrado\Integrado;
@@ -11,7 +12,6 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Log;
-use ONRStatusEnum;
 
 class ProcessarPedidoONRJob implements ShouldQueue
 {
@@ -126,14 +126,14 @@ class ProcessarPedidoONRJob implements ShouldQueue
                 }
 
                 $this->pedido->update([
-                    'integrador_ordem_servico_id'       => $ordemServico['idos'],
-                    'integrador_selo_prefixo'           => $selo['prefixo'],
-                    'integrador_selo_numero'            => $selo['numeracao'],
-                    'integrador_selo_codigo_atos'       => $selo['codigoatos'],
-                    'integrador_selo_valor'             => $selo['valorselo'],
-                    'status_envio'                      => ONRStatusEnum::PENDENTE->value,
-                    'integrador_selo_data'              => $selo['dataselagem'],
-                    'integrador_selo_hora'              => $selo['hora_selagem'],
+                    'integrado_ordem_servico_id'       => $ordemServico['idos'],
+                    'integrado_selo_prefixo'           => $selo['prefixo'],
+                    'integrado_selo_numero'            => $selo['numeracao'],
+                    'integrado_selo_codigo_atos'       => $selo['codigoatos'],
+                    'integrado_selo_valor'             => $selo['valorselo'],
+                    'status_envio'                     => ONRStatusEnum::PENDENTE->value,
+                    'integrado_selo_data'              => $selo['dataselagem'],
+                    'integrado_selo_hora'              => $selo['hora_selagem'],
 
                     // CONTRADITÓRIO
                     'possui_contraditorio'              => (is_array($contraditorio) && count($contraditorio) > 0) ? true : false,

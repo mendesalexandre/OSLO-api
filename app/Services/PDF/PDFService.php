@@ -192,7 +192,7 @@ class PDFService
         $paginasOriginal->clear();
         $documentoFinal->clear();
 
-        $textoQrCode = "https://gif.tjmt.jus.br/selo/Consulta/ConSeloDigitalExterno.aspx?nselo={$data['integrador_selo_prefixo']}-{$data['integrador_selo_numero']}";
+        $textoQrCode = "https://gif.tjmt.jus.br/selo/Consulta/ConSeloDigitalExterno.aspx?nselo={$data['integrado_selo_prefixo']}-{$data['integrado_selo_numero']}";
         $qrCode = self::qrCode($textoQrCode);
 
         // Mescla com a página de certificação via SnappyPDF
@@ -256,10 +256,10 @@ class PDFService
             // Título dinâmico
             $numeroMatricula = $dados['data']['certidao_matricula_numero'] ?? 'N/A';
             // Data atual para o assunto
-            $seloPrefixo = $dados['data']['integrador_selo_prefixo'] ?? 'N/A';
-            $seloNumero = $dados['data']['integrador_selo_numero'] ?? 'N/A';
-            $dataSelo = date('d/m/Y', strtotime($dados['data']['integrador_selo_data']));
-            $horaSelo = date('H:i', strtotime($dados['data']['integrador_selo_hora']));
+            $seloPrefixo = $dados['data']['integrado_selo_prefixo'] ?? 'N/A';
+            $seloNumero = $dados['data']['integrado_selo_numero'] ?? 'N/A';
+            $dataSelo = date('d/m/Y', strtotime($dados['data']['integrado_selo_data']));
+            $horaSelo = date('H:i', strtotime($dados['data']['integrado_selo_hora']));
             $dataEmissao = $dataSelo . ' às ' . $horaSelo;
             $assunto = "Certidão de Inteiro Teor de Imóvel - Emitida em {$dataEmissao}";
             $seloDigital = "Selo Digital: {$seloPrefixo}-{$seloNumero}";

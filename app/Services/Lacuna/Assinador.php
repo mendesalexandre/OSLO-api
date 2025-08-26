@@ -2,6 +2,7 @@
 
 namespace App\Services\Lacuna;
 
+use App\Models\ONRConfiguracao;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Client\Response;
@@ -109,7 +110,8 @@ class Assinador
                 'arquivo' => $nomeArquivo,
                 'tempo_total' => $tempoTotal . 's',
                 'certificado_id' => $this->certificado->getCertificado()->id,
-                'url_assinado' => $resultadoFinal['signedFile']['url'] ?? null
+                'url_assinado' => $resultadoFinal['signedFile']['url'] ?? null,
+                'dados_assinatura' => $resultadoFinal
             ]);
 
             return $resultadoFinal;
@@ -228,7 +230,7 @@ class Assinador
     private function fazerRequisicaoInicial(string $conteudo, string $nome, int $tamanho, string $chavePublica): Response
     {
         return Http::withHeaders([
-            'X-Api-Key' => config('services.restpki.api_key'),
+            'X-Api-Key' => ONRConfiguracao::query()->value('chave_assinador_onr_web'),
             'Content-Type' => 'application/json',
         ])
             ->timeout(self::TIMEOUT_ASSINATURA)
@@ -262,7 +264,7 @@ class Assinador
     private function fazerRequisicaoCompletion(string $state, string $signature): Response
     {
         return Http::withHeaders([
-            'X-Api-Key' => config('services.restpki.api_key'),
+            'X-Api-Key' => ONRConfiguracao::query()->value('chave_assinador_onr_web'),
             'Content-Type' => 'application/json',
         ])
             ->timeout(self::TIMEOUT_COMPLETION)
