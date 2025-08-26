@@ -12,26 +12,38 @@ use App\Models\ONRConfiguracao;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\File;
 
-class EmitirCertidaoJob implements ShouldQueue
+class EmitirCertidaoJob implements ShouldQueue, ShouldBeUnique
 {
     use Batchable, Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public int $timeout = 1800;
     public int $tries = 2;
+    public int $uniqueFor = 3600;
+
 
     public function __construct(
         public readonly array $certidaoData
     ) {}
 
+    public function uniqueId()
+    {
+        $id = "emitir_certidao_" . $this->certidaoData['PROTOCOLO_SOLICITACAO'];
+        Log::info("🔒 Job único criado para protocolo: {$id}");
+        return $id;
+    }
+
+
     public function handle(): void
     {
         if ($this->batch()?->cancelled()) {
+            Log::info("🚫 Batch cancelado, ignorando job: {$this->certidaoData['PROTOCOLO_SOLICITACAO']}");
             return;
         }
 
