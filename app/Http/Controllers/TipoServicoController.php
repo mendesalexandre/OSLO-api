@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\TipoServico;
+use App\Traits\ApiResponseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
@@ -10,59 +11,53 @@ use Illuminate\Validation\Rule;
 
 class TipoServicoController extends Controller
 {
+    use ApiResponseTrait;
+
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request): JsonResponse
     {
-        // Usando Policy - Laravel resolve automaticamente
-        $this->authorize('viewAny', TipoServico::class);
+        $this->authorize('PERMITIR_TIPO_SERVICO_VISUALIZAR');
 
-        $query = TipoServico::disponivel();
+        $query = TipoServico::disponivel()->comAuditoria();
+
         $this->applyFilters($query, $request);
 
         $tiposServico = $query->orderBy('nome')->paginate(
             $request->get('per_page', 15)
         );
 
-        return $this->successResponse($tiposServico->items(), [
-            'pagination' => $this->formatPagination($tiposServico),
+        return $this->paginatedResponse($tiposServico, [
             'user_permissions' => $this->getUserModulePermissions()
         ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+
     public function store(Request $request): JsonResponse
     {
-        $this->authorize('create', TipoServico::class);
+        $this->authorize('PERMITIR_TIPO_SERVICO_CRIAR');
 
         $validated = $this->validateTipoServico($request);
+
         $tipoServico = TipoServico::create($validated);
 
-        Log::info('Tipo de serviço criado', array_merge(
-            $this->getLogData($tipoServico),
-            ['user_id' => auth()->id()]
-        ));
+        Log::info('Tipo de serviço criado', $this->getLogData($tipoServico));
 
-        return $this->successResponse($tipoServico, [
-            'message' => 'Tipo de serviço criado com sucesso.'
-        ], 201);
+        return $this->createdResponse($tipoServico->load([
+            'usuarioCriacao:id,nome,email'
+        ]));
     }
 
-    /**
-     * Display the specified resource.
-     */
+
     public function show(string $id): JsonResponse
     {
-        $tipoServico = $this->findTipoServico($id);
+        $this->authorize('PERMITIR_TIPO_SERVICO_VISUALIZAR');
 
-        // Policy com instância do model
-        $this->authorize('view', $tipoServico);
+        $tipoServico = $this->findTipoServico($id, true); // Com auditoria
 
         return $this->successResponse($tipoServico, [
-            'user_permissions' => $this->getUserModulePermissions($tipoServico)
+            'user_permissions' => $this->getUserModulePermissions()
         ]);
     }
 
@@ -71,21 +66,20 @@ class TipoServicoController extends Controller
      */
     public function update(Request $request, string $id): JsonResponse
     {
+        $this->authorize('PERMITIR_TIPO_SERVICO_EDITAR');
+
         $tipoServico = $this->findTipoServico($id);
 
-        $this->authorize('update', $tipoServico);
-
         $validated = $this->validateTipoServico($request, $tipoServico->id);
+
         $tipoServico->update($validated);
 
-        Log::info('Tipo de serviço atualizado', array_merge(
-            $this->getLogData($tipoServico),
-            ['user_id' => auth()->id()]
-        ));
+        Log::info('Tipo de serviço atualizado', $this->getLogData($tipoServico));
 
-        return $this->successResponse($tipoServico->fresh(), [
-            'message' => 'Tipo de serviço atualizado com sucesso.'
-        ]);
+        return $this->updatedResponse($tipoServico->fresh()->load([
+            'usuarioCriacao:id,nome,email',
+            'usuarioAlteracao:id,nome,email'
+        ]));
     }
 
     /**
@@ -93,20 +87,15 @@ class TipoServicoController extends Controller
      */
     public function destroy(string $id): JsonResponse
     {
+        $this->authorize('PERMITIR_TIPO_SERVICO_EXCLUIR');
+
         $tipoServico = $this->findTipoServico($id);
 
-        $this->authorize('delete', $tipoServico);
+        $tipoServico->delete(); // Usa o delete customizado com auditoria
 
-        $tipoServico->delete();
+        Log::info('Tipo de serviço excluído', $this->getLogData($tipoServico));
 
-        Log::info('Tipo de serviço excluído', array_merge(
-            $this->getLogData($tipoServico),
-            ['user_id' => auth()->id()]
-        ));
-
-        return $this->successResponse(null, [
-            'message' => 'Tipo de serviço excluído com sucesso.'
-        ]);
+        return $this->deletedResponse();
     }
 
     /**
@@ -114,20 +103,20 @@ class TipoServicoController extends Controller
      */
     public function restore(string $id): JsonResponse
     {
+        $this->authorize('PERMITIR_TIPO_SERVICO_RESTAURAR');
+
         $tipoServico = TipoServico::where('id', $id)
             ->whereNotNull('data_exclusao')
             ->firstOrFail();
 
-        $this->authorize('restore', $tipoServico);
+        $tipoServico->restore(); // Usa o restore customizado com auditoria
 
-        $tipoServico->restore();
+        Log::info('Tipo de serviço restaurado', $this->getLogData($tipoServico));
 
-        Log::info('Tipo de serviço restaurado', array_merge(
-            $this->getLogData($tipoServico),
-            ['user_id' => auth()->id()]
-        ));
-
-        return $this->successResponse($tipoServico->fresh(), [
+        return $this->successResponse($tipoServico->fresh()->load([
+            'usuarioCriacao:id,nome,email',
+            'usuarioAlteracao:id,nome,email'
+        ]), [
             'message' => 'Tipo de serviço restaurado com sucesso.'
         ]);
     }
@@ -137,9 +126,9 @@ class TipoServicoController extends Controller
      */
     public function toggleStatus(string $id): JsonResponse
     {
-        $tipoServico = $this->findTipoServico($id);
+        $this->authorize('PERMITIR_TIPO_SERVICO_ALTERAR_STATUS');
 
-        $this->authorize('toggleStatus', $tipoServico);
+        $tipoServico = $this->findTipoServico($id);
 
         $tipoServico->update(['is_ativo' => !$tipoServico->is_ativo]);
 
@@ -147,38 +136,112 @@ class TipoServicoController extends Controller
 
         Log::info("Tipo de serviço {$status}", array_merge(
             $this->getLogData($tipoServico),
-            ['is_ativo' => $tipoServico->is_ativo, 'user_id' => auth()->id()]
+            ['is_ativo' => $tipoServico->is_ativo]
         ));
 
-        return $this->successResponse($tipoServico->fresh(), [
+        return $this->successResponse($tipoServico->fresh()->load([
+            'usuarioCriacao:id,nome,email',
+            'usuarioAlteracao:id,nome,email'
+        ]), [
             'message' => "Tipo de serviço {$status} com sucesso."
         ]);
     }
 
-    // ... resto dos métodos iguais ...
-
     /**
-     * Get user permissions for specific TipoServico instance.
+     * Find TipoServico by ID or fail.
      */
-    private function getUserModulePermissions(?TipoServico $tipoServico = null): array
+    private function findTipoServico(string $id, bool $withAudit = false): TipoServico
     {
-        $user = auth()->user();
+        $query = TipoServico::disponivel();
 
-        if ($tipoServico) {
-            return [
-                'pode_visualizar' => $user->can('view', $tipoServico),
-                'pode_editar' => $user->can('update', $tipoServico),
-                'pode_excluir' => $user->can('delete', $tipoServico),
-                'pode_restaurar' => $user->can('restore', $tipoServico),
-                'pode_alterar_status' => $user->can('toggleStatus', $tipoServico),
-            ];
+        if ($withAudit) {
+            $query->comAuditoria();
         }
 
+        return $query->findOrFail($id);
+    }
+
+    /**
+     * Validate TipoServico data.
+     */
+    private function validateTipoServico(Request $request, ?int $excludeId = null): array
+    {
+        return $request->validate([
+            'nome' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('tipo_servico', 'nome')->ignore($excludeId)
+            ],
+            'descricao' => 'nullable|string',
+            'valor' => 'nullable|numeric|min:0|max:999999.99',
+            'opcoes' => 'nullable|array',
+            'is_ativo' => 'sometimes|boolean'
+        ], [
+            'nome.required' => 'O nome é obrigatório.',
+            'nome.unique' => 'Já existe um tipo de serviço com este nome.',
+            'nome.max' => 'O nome não pode ter mais de 255 caracteres.',
+            'valor.numeric' => 'O valor deve ser um número.',
+            'valor.min' => 'O valor deve ser maior ou igual a zero.',
+            'valor.max' => 'O valor não pode ser maior que 999.999,99.',
+            'opcoes.array' => 'As opções devem ser um array válido.'
+        ]);
+    }
+
+    /**
+     * Apply filters to query.
+     */
+    private function applyFilters($query, Request $request): void
+    {
+        $query->when($request->filled('nome'), function ($q) use ($request) {
+            $q->where('nome', 'like', '%' . $request->nome . '%');
+        });
+
+        $query->when($request->has('is_ativo'), function ($q) use ($request) {
+            $q->where('is_ativo', $request->boolean('is_ativo'));
+        });
+
+        // Filtros de auditoria
+        $query->when($request->filled('usuario_criacao_id'), function ($q) use ($request) {
+            $q->where('usuario_criacao_id', $request->usuario_criacao_id);
+        });
+
+        $query->when($request->filled('data_criacao_inicio'), function ($q) use ($request) {
+            $q->where('data_cadastro', '>=', $request->data_criacao_inicio);
+        });
+
+        $query->when($request->filled('data_criacao_fim'), function ($q) use ($request) {
+            $q->where('data_cadastro', '<=', $request->data_criacao_fim);
+        });
+    }
+
+    /**
+     * Get log data for TipoServico.
+     */
+    private function getLogData(TipoServico $tipoServico): array
+    {
         return [
-            'pode_criar' => $user->can('create', TipoServico::class),
-            'pode_visualizar' => $user->can('viewAny', TipoServico::class),
+            'id' => $tipoServico->id,
+            'uuid' => $tipoServico->uuid,
+            'nome' => $tipoServico->nome,
+            'user_id' => auth()->id(),
+            'user_email' => auth()->user()?->email
         ];
     }
 
-    // ... resto dos métodos privados iguais ...
+    /**
+     * Get user permissions for TIPO_SERVICO module.
+     */
+    private function getUserModulePermissions(): array
+    {
+        $user = auth()->user();
+
+        return [
+            'pode_criar' => $user->can('PERMITIR_TIPO_SERVICO_CRIAR'),
+            'pode_editar' => $user->can('PERMITIR_TIPO_SERVICO_EDITAR'),
+            'pode_excluir' => $user->can('PERMITIR_TIPO_SERVICO_EXCLUIR'),
+            'pode_restaurar' => $user->can('PERMITIR_TIPO_SERVICO_RESTAURAR'),
+            'pode_alterar_status' => $user->can('PERMITIR_TIPO_SERVICO_ALTERAR_STATUS'),
+        ];
+    }
 }
