@@ -122,8 +122,8 @@ Route::group(['prefix' => 'onr'], function () {
 Route::prefix('auth')->group(function () {
 
     // Login
-    Route::post('/login', [AuthController::class, 'login'])
-        ->name('auth.login');
+    Route::post('/autenticacao', [AuthController::class, 'login'])
+        ->name('autenticacao');
 
     // Rotas protegidas (requerem autenticação)
     Route::middleware(['auth:api'])->group(function () {

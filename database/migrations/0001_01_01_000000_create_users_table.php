@@ -11,21 +11,22 @@ return new class extends Migration
         Schema::create('usuario', function (Blueprint $table) {
             $table->id();
             $table->uuid();
-            $table->boolean('ativo')->default(true);
+            $table->boolean('is_ativo')->default(true);
             $table->string('nome');
             $table->string('email')->unique();
             $table->timestamp('email_verificado_em')->nullable();
             $table->string('senha');
-            $table->string('telefone')->nullable();
-            $table->string('avatar')->nullable();
-            $table->json('configuracao')->nullable();
+            $table->string('foto')->nullable();
+
+            $table->timestamp('ultimo_login_em')->nullable();
+            $table->string('ultimo_login_ip')->nullable();
 
             $table->timestamp('data_cadastro')->useCurrent();
             $table->timestamp('data_alteracao')->useCurrent();
             $table->timestamp('data_exclusao')->nullable();
 
             // Índices para melhor performance
-            $table->index(['email', 'ativo']);
+            $table->index(['email', 'is_ativo']);
         });
 
         // Tabela para reset de senha (útil mesmo com Passport)
