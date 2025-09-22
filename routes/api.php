@@ -146,5 +146,5 @@ Route::middleware(['auth:api'])->group(function () {
     });
 });
 
-// Route::get('/versao', [VersaoController::class, 'version']);
-// Route::get('/system/info', [VersaoController::class, 'info']);
+Route::get('/versao', [VersaoController::class, 'version']);
+Route::get('/system/info', [VersaoController::class, 'info']);
