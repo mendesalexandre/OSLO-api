@@ -8,17 +8,16 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Gate;
+use \Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class DominioController extends Controller
 {
-    use ApiResponseTrait;
+    use ApiResponseTrait, AuthorizesRequests;
 
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request): JsonResponse
     {
-        // $this->authorize('PERMITIR_DOMINIO_VISUALIZAR');
+        $this->authorize('PERMITIR_DOMINIO_VISUALIZAR');
 
         $query = Dominio::disponivel()->comAuditoria();
 

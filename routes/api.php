@@ -119,12 +119,13 @@ Route::group(['prefix' => 'onr'], function () {
     });
 });
 
+// Login
+Route::post('/login', [AuthController::class, 'login'])
+    ->name('login');
 
 Route::prefix('auth')->group(function () {
 
-    // Login
-    Route::post('/autenticacao', [AuthController::class, 'login'])
-        ->name('autenticacao');
+
 
     // Rotas protegidas (requerem autenticação)
     Route::middleware(['auth:api'])->group(function () {
@@ -149,8 +150,6 @@ Route::prefix('auth')->group(function () {
             ->name('auth.changePassword');
     });
 });
-
-
 
 // Dominios
 Route::group(['prefix' => 'dominios'], function () {
