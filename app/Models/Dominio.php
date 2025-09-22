@@ -6,6 +6,7 @@ use App\Traits\AuditableTrait;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Natureza;
 
 class Dominio extends Model
 {
@@ -241,7 +242,7 @@ class Dominio extends Model
     /**
      * Obter domínios por atribuição
      */
-    public static function getPorAtribuicao(string $atribuicao): \Illuminate\Support\Collection
+    public static function getPorAtribuicao(string $atribuicao): Collection
     {
         return self::disponivel()
             ->porAtribuicao($atribuicao)

@@ -1,13 +1,14 @@
 <?php
 
-use App\Http\Controllers\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\FeriadoController;
-use App\Http\Controllers\ONR\CertificadoDigitalController;
 use App\Models\ONR\CertificadoDigital;
-use App\Services\ONR\Autenticacao\Autenticacao;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DominioController;
+use App\Http\Controllers\FeriadoController;
 use App\Services\ONR\Certidao\CertidaoService;
+use App\Services\ONR\Autenticacao\Autenticacao;
+use App\Http\Controllers\ONR\CertificadoDigitalController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -147,4 +148,15 @@ Route::prefix('auth')->group(function () {
         Route::post('/change-password', [AuthController::class, 'changePassword'])
             ->name('auth.changePassword');
     });
+});
+
+
+
+// Dominios
+Route::group(['prefix' => 'dominios'], function () {
+    Route::get('/', [DominioController::class, 'index']);
+    Route::post('/criar', [DominioController::class, 'create']);
+    Route::get('/{id}', [DominioController::class, 'show']);
+    Route::put('/{id}', [DominioController::class, 'update']);
+    Route::delete('/{id}', [DominioController::class, 'destroy']);
 });
