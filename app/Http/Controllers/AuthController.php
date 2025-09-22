@@ -18,8 +18,6 @@ class AuthController extends Controller
 {
     use ApiResponseTrait, AuthorizesRequests;
 
-
-
     public function __construct()
     {
         $this->middleware('auth:api', ['except' => ['login', 'register']]);
@@ -30,64 +28,26 @@ class AuthController extends Controller
      */
     public function login(LoginRequest $request): JsonResponse
     {
-        // Buscar usuário pelo email
+        // Buscar e validar usuário
         $user = $this->findUserByEmail($request->getEmail());
 
-        // Verificar se usuário existe e está ativo
-        if (!$user) {
-            return $this->loginFailedResponse($request, 'Usuário não encontrado');
+        if (!$user || !$user->is_ativo || !Hash::check($request->getPassword(), $user->senha)) {
+            return $this->loginFailedResponse($request, 'Credenciais inválidas');
         }
+        // Criar token com Passport
+        $tokenResult = $user->createToken('API Token');
+        $token = $tokenResult->token;
 
-        if (!$user->is_ativo) {
-            return $this->loginFailedResponse($request, 'Usuário inativo');
-        }
-
-        // Verificar senha
-        if (!Hash::check($request->getPassword(), $user->senha)) {
-            return $this->loginFailedResponse($request, 'Senha incorreta');
-        }
-
-        // Verificar se email foi verificado (se necessário)
-        if ($this->shouldVerifyEmail() && !$user->email_verificado_em) {
-            return $this->errorResponse(
-                'Email não verificado. Verifique sua caixa de entrada.',
-                ['code' => 'EMAIL_NOT_VERIFIED'],
-                403
-            );
-        }
-
-        // Gerar token JWT
-        try {
-            $token = JWTAuth::fromUser($user);
-        } catch (JWTException $e) {
-            Log::error('Erro ao gerar token JWT', [
-                'user_id' => $user->id,
-                'error' => $e->getMessage()
-            ]);
-
-            return $this->errorResponse('Erro ao gerar token de acesso.', [], 500);
-        }
-
-        // Atualizar dados do último login
-        $this->updateLastLogin($user, $request);
-
-        // Log de sucesso
-        Log::info('Login realizado com sucesso', [
-            'user_id' => $user->id,
-            'user_uuid' => $user->uuid,
-            'email' => $user->email,
-            'ip' => $request->ip(),
-            'user_agent' => $request->userAgent(),
-            'remember_me' => $request->shouldRemember()
-        ]);
+        // Configurar expiração
+        $hours = $request->shouldRemember() ? 24 * 7 : 24;
+        $token->expires_at = Carbon::now()->addHours($hours);
+        $token->save();
 
         return $this->successResponse([
-            'access_token' => $token,
+            'access_token' => $tokenResult->accessToken,
             'token_type' => 'Bearer',
-            'expires_in' => config('jwt.ttl') * 60, // TTL em segundos
+            'expires_at' => $token->expires_at->toDateTimeString(),
             'user' => $this->formatUserResponse($user)
-        ], [
-            'message' => 'Login realizado com sucesso.'
         ]);
     }
 

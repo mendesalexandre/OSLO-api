@@ -9,6 +9,7 @@ use App\Http\Controllers\FeriadoController;
 use App\Services\ONR\Certidao\CertidaoService;
 use App\Services\ONR\Autenticacao\Autenticacao;
 use App\Http\Controllers\ONR\CertificadoDigitalController;
+use Illuminate\Support\Facades\Storage;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -85,16 +86,6 @@ Route::group(['prefix' => 'onr'], function () {
                 'verificado_em' => now()
             ]);
         })->name('certificado.status');
-
-        // Verificar vencimentos (para alertas)
-        Route::get('/vencimentos', function () {
-            $vencimentos = \App\Services\Lacuna\Certificado::verificarVencimentos();
-
-            return response()->json([
-                'success' => true,
-                'data' => $vencimentos
-            ]);
-        })->name('certificado.vencimentos');
     })->group(function () {
         Route::delete('/{id}', [CertificadoDigitalController::class, 'remover'])
             ->name('certificado.remover');
@@ -109,7 +100,7 @@ Route::group(['prefix' => 'onr'], function () {
 
         // Status público (sem dados sensíveis)
         Route::get('/status', function () {
-            $existe = \Storage::disk('local')->exists('certificados/certificado_atual.pfx');
+            $existe = Storage::disk('local')->exists('certificados/certificado_atual.pfx');
 
             return response()->json([
                 'certificado_configurado' => $existe,
