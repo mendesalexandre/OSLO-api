@@ -9,14 +9,11 @@ use App\Http\Controllers\FeriadoController;
 use App\Services\ONR\Certidao\CertidaoService;
 use App\Services\ONR\Autenticacao\Autenticacao;
 use App\Http\Controllers\ONR\CertificadoDigitalController;
+use App\Http\Controllers\VersaoController;
 use Illuminate\Support\Facades\Storage;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
-
-
-    // Dominios
-
 })->middleware(['auth:api']);
 
 Route::get('/ping', function () {
@@ -118,8 +115,6 @@ Route::group(['prefix' => 'onr'], function () {
 Route::post('/login', [AuthController::class, 'login'])
     ->name('login');
 
-
-
 // Rotas protegidas (requerem autenticação)
 Route::middleware(['auth:api'])->group(function () {
     // Logout
@@ -150,3 +145,6 @@ Route::middleware(['auth:api'])->group(function () {
         Route::delete('/{id}', [DominioController::class, 'destroy']);
     });
 });
+
+// Route::get('/versao', [VersaoController::class, 'version']);
+// Route::get('/system/info', [VersaoController::class, 'info']);
