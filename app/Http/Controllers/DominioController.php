@@ -20,7 +20,7 @@ class DominioController extends Controller
         $user = User::find(1);
         $permissao = $user->can('PERMITIR_DOMINIO_CRIAR');
         // dd($permissao);
-        $this->authorize('viewAny', Dominio::class);
+        $this->authorize('view', Dominio::class);
 
         $query = Dominio::disponivel()->comAuditoria();
 
@@ -36,10 +36,7 @@ class DominioController extends Controller
         ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request): JsonResponse
+    public function create(Request $request): JsonResponse
     {
         $this->authorize('PERMITIR_DOMINIO_CRIAR');
 
@@ -54,9 +51,6 @@ class DominioController extends Controller
         ]));
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id): JsonResponse
     {
         $this->authorize('PERMITIR_DOMINIO_VISUALIZAR');
@@ -216,6 +210,9 @@ class DominioController extends Controller
      */
     private function findDominio(string $id, bool $comAuditoria = false): Dominio
     {
+        /**
+         * @var Dominio $query
+         */
         $query = Dominio::disponivel();
 
         if ($comAuditoria) {

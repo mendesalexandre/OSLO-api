@@ -12,7 +12,7 @@ class DominioPolicy
         return $user->can('PERMITIR_DOMINIO_VISUALIZAR');
     }
 
-    public function view(User $user, Dominio $dominio): bool
+    public function view(User $user): bool
     {
         return $user->can('PERMITIR_DOMINIO_VISUALIZAR');
     }

@@ -14,12 +14,10 @@ class Dominio extends Model
 
     protected $table = 'dominio';
 
-    // Desabilita os timestamps padrão do Laravel
-    public $timestamps = false;
-
     // Define os timestamps customizados
     const CREATED_AT = 'data_cadastro';
     const UPDATED_AT = 'data_alteracao';
+    const DELETED_AT = 'data_exclusao';
 
     protected $fillable = [
         'is_ativo',
@@ -206,6 +204,11 @@ class Dominio extends Model
     public function isGeral(): bool
     {
         return $this->atribuicao === 'GERAL';
+    }
+
+    public function isOficio(): bool
+    {
+        return $this->atribuicao === 'OFICIO';
     }
 
     /**
