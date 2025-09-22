@@ -142,7 +142,6 @@ Route::middleware(['auth:api'])->group(function () {
     Route::post('/change-password', [AuthController::class, 'changePassword'])
         ->name('auth.changePassword');
 
-
     Route::group(['prefix' => 'dominios'], function () {
         Route::get('/', [DominioController::class, 'index']);
         Route::post('/criar', [DominioController::class, 'create']);

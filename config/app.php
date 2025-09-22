@@ -123,4 +123,9 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+
+    'version' => env('APP_VERSION', '1.0.0'),
+    'build_date' => env('APP_BUILD_DATE', now()->format('Y-m-d H:i:s')),
+    'commit_hash' => env('APP_COMMIT_HASH', 'unknown'),
+
 ];

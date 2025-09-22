@@ -210,8 +210,8 @@ class AuthController extends Controller
     private function updateLastLogin(User $user, LoginRequest $request): void
     {
         $user->update([
-            'last_login_at' => now(),
-            'last_login_ip' => $request->ip(),
+            'ultimo_login' => now(),
+            'ultimo_login_ip' => $request->ip(),
         ]);
     }
 

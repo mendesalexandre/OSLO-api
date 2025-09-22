@@ -34,37 +34,44 @@ class PermissionSeeder extends Seeder
             [
                 'name' => 'PERMITIR_NATUREZA_CRIAR',
                 'description' => 'Permitir criar novas naturezas',
-                'module_name' => 'NATUREZA'
+                'module_name' => 'NATUREZA',
+                'guard_name' => 'api' // ← Importante
             ],
             [
                 'name' => 'PERMITIR_NATUREZA_VISUALIZAR',
                 'description' => 'Permitir visualizar naturezas',
-                'module_name' => 'NATUREZA'
+                'module_name' => 'NATUREZA',
+                'guard_name' => 'api' // ← Importante
             ],
             [
                 'name' => 'PERMITIR_NATUREZA_EDITAR',
                 'description' => 'Permitir editar naturezas',
-                'module_name' => 'NATUREZA'
+                'module_name' => 'NATUREZA',
+                'guard_name' => 'api' // ← Importante
             ],
             [
                 'name' => 'PERMITIR_NATUREZA_EXCLUIR',
                 'description' => 'Permitir excluir naturezas',
-                'module_name' => 'NATUREZA'
+                'module_name' => 'NATUREZA',
+                'guard_name' => 'api' // ← Importante
             ],
             [
                 'name' => 'PERMITIR_NATUREZA_RESTAURAR',
                 'description' => 'Permitir restaurar naturezas excluídas',
-                'module_name' => 'NATUREZA'
+                'module_name' => 'NATUREZA',
+                'guard_name' => 'api' // ← Importante
             ],
             [
                 'name' => 'PERMITIR_NATUREZA_ALTERAR_STATUS',
                 'description' => 'Permitir ativar/desativar naturezas',
-                'module_name' => 'NATUREZA'
+                'module_name' => 'NATUREZA',
+                'guard_name' => 'api' // ← Importante
             ],
             [
                 'name' => 'PERMITIR_NATUREZA_DUPLICAR',
                 'description' => 'Permitir duplicar naturezas',
-                'module_name' => 'NATUREZA'
+                'module_name' => 'NATUREZA',
+                'guard_name' => 'api' // ← Importante
             ],
         ];
 
