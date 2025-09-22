@@ -18,7 +18,8 @@ class DominioController extends Controller
     public function index(Request $request): JsonResponse
     {
         $user = User::find(1);
-        $user->givePermissionTo('PERMITIR_DOMINIO_CRIAR');
+        $permissao = $user->can('PERMITIR_DOMINIO_CRIAR');
+        // dd($permissao);
         $this->authorize('viewAny', Dominio::class);
 
         $query = Dominio::disponivel()->comAuditoria();
