@@ -17,7 +17,7 @@ class DominioController extends Controller
 
     public function index(Request $request): JsonResponse
     {
-        $this->authorize('PERMITIR_DOMINIO_VISUALIZAR');
+        $this->authorize('viewAny', Dominio::class);
 
         $query = Dominio::disponivel()->comAuditoria();
 

@@ -13,6 +13,10 @@ use Illuminate\Support\Facades\Storage;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
+
+
+    // Dominios
+
 })->middleware(['auth:api']);
 
 Route::get('/ping', function () {
@@ -114,39 +118,36 @@ Route::group(['prefix' => 'onr'], function () {
 Route::post('/login', [AuthController::class, 'login'])
     ->name('login');
 
-Route::prefix('auth')->group(function () {
 
 
+// Rotas protegidas (requerem autenticação)
+Route::middleware(['auth:api'])->group(function () {
+    // Logout
+    Route::post('/logout', [AuthController::class, 'logout'])
+        ->name('auth.logout');
 
-    // Rotas protegidas (requerem autenticação)
-    Route::middleware(['auth:api'])->group(function () {
-        // Logout
-        Route::post('/logout', [AuthController::class, 'logout'])
-            ->name('auth.logout');
+    // Dados do usuário autenticado
+    Route::get('/me', [AuthController::class, 'me'])
+        ->name('auth.me');
 
-        // Dados do usuário autenticado
-        Route::get('/me', [AuthController::class, 'me'])
-            ->name('auth.me');
+    // Renovar token
+    Route::post('/refresh', [AuthController::class, 'refresh'])
+        ->name('auth.refresh');
 
-        // Renovar token
-        Route::post('/refresh', [AuthController::class, 'refresh'])
-            ->name('auth.refresh');
+    // Revogar todos os tokens
+    Route::post('/revoke-all', [AuthController::class, 'revokeAllTokens'])
+        ->name('auth.revokeAll');
 
-        // Revogar todos os tokens
-        Route::post('/revoke-all', [AuthController::class, 'revokeAllTokens'])
-            ->name('auth.revokeAll');
+    // Alterar senha
+    Route::post('/change-password', [AuthController::class, 'changePassword'])
+        ->name('auth.changePassword');
 
-        // Alterar senha
-        Route::post('/change-password', [AuthController::class, 'changePassword'])
-            ->name('auth.changePassword');
+
+    Route::group(['prefix' => 'dominios'], function () {
+        Route::get('/', [DominioController::class, 'index']);
+        Route::post('/criar', [DominioController::class, 'create']);
+        Route::get('/{id}', [DominioController::class, 'show']);
+        Route::put('/{id}', [DominioController::class, 'update']);
+        Route::delete('/{id}', [DominioController::class, 'destroy']);
     });
-});
-
-// Dominios
-Route::group(['prefix' => 'dominios'], function () {
-    Route::get('/', [DominioController::class, 'index']);
-    Route::post('/criar', [DominioController::class, 'create']);
-    Route::get('/{id}', [DominioController::class, 'show']);
-    Route::put('/{id}', [DominioController::class, 'update']);
-    Route::delete('/{id}', [DominioController::class, 'destroy']);
 });

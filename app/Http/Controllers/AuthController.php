@@ -2,16 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\LoginRequest;
+use Carbon\Carbon;
 use App\Models\User;
-use App\Traits\ApiResponseTrait;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
+use App\Traits\ApiResponseTrait;
+use Illuminate\Http\JsonResponse;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use App\Http\Requests\LoginRequest;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Exceptions\JWTException;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Tymon\JWTAuth\Contracts\JWTSubject; // <- Adicionar este import
 
 class AuthController extends Controller
