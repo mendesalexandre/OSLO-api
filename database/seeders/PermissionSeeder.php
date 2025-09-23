@@ -89,32 +89,39 @@ class PermissionSeeder extends Seeder
             [
                 'name' => 'PERMITIR_DOMINIO_CRIAR',
                 'description' => 'Permitir criar novos domínios',
-                'module_name' => 'DOMINIO'
+                'module_name' => 'DOMINIO',
+                'guard_name' => 'api' // ← Importante
+
             ],
             [
                 'name' => 'PERMITIR_DOMINIO_VISUALIZAR',
                 'description' => 'Permitir visualizar domínios',
-                'module_name' => 'DOMINIO'
+                'module_name' => 'DOMINIO',
+                'guard_name' => 'api' // ← Importante
             ],
             [
                 'name' => 'PERMITIR_DOMINIO_EDITAR',
                 'description' => 'Permitir editar domínios',
-                'module_name' => 'DOMINIO'
+                'module_name' => 'DOMINIO',
+                'guard_name' => 'api' // ← Importante
             ],
             [
                 'name' => 'PERMITIR_DOMINIO_EXCLUIR',
                 'description' => 'Permitir excluir domínios',
-                'module_name' => 'DOMINIO'
+                'module_name' => 'DOMINIO',
+                'guard_name' => 'api' // ← Importante
             ],
             [
                 'name' => 'PERMITIR_DOMINIO_RESTAURAR',
                 'description' => 'Permitir restaurar domínios excluídos',
-                'module_name' => 'DOMINIO'
+                'module_name' => 'DOMINIO',
+                'guard_name' => 'api' // ← Importante
             ],
             [
                 'name' => 'PERMITIR_DOMINIO_ALTERAR_STATUS',
                 'description' => 'Permitir ativar/desativar domínios',
-                'module_name' => 'DOMINIO'
+                'module_name' => 'DOMINIO',
+                'guard_name' => 'api' // ← Importante
             ],
         ];
 
@@ -132,37 +139,44 @@ class PermissionSeeder extends Seeder
             [
                 'name' => 'PERMITIR_USUARIO_CRIAR',
                 'description' => 'Permitir criar novos usuários',
-                'module_name' => 'USUARIO'
+                'module_name' => 'USUARIO',
+                'guard_name' => 'api' // ← Importante
             ],
             [
                 'name' => 'PERMITIR_USUARIO_VISUALIZAR',
                 'description' => 'Permitir visualizar usuários',
-                'module_name' => 'USUARIO'
+                'module_name' => 'USUARIO',
+                'guard_name' => 'api' // ← Importante
             ],
             [
                 'name' => 'PERMITIR_USUARIO_EDITAR',
                 'description' => 'Permitir editar usuários',
-                'module_name' => 'USUARIO'
+                'module_name' => 'USUARIO',
+                'guard_name' => 'api' // ← Importante
             ],
             [
                 'name' => 'PERMITIR_USUARIO_EXCLUIR',
                 'description' => 'Permitir excluir usuários',
-                'module_name' => 'USUARIO'
+                'module_name' => 'USUARIO',
+                'guard_name' => 'api' // ← Importante
             ],
             [
                 'name' => 'PERMITIR_USUARIO_ALTERAR_PERMISSOES',
                 'description' => 'Permitir alterar permissões de usuários',
-                'module_name' => 'USUARIO'
+                'module_name' => 'USUARIO',
+                'guard_name' => 'api' // ← Importante
             ],
             [
                 'name' => 'PERMITIR_USUARIO_ALTERAR_STATUS',
                 'description' => 'Permitir ativar/desativar usuários',
-                'module_name' => 'USUARIO'
+                'module_name' => 'USUARIO',
+                'guard_name' => 'api' // ← Importante
             ],
             [
                 'name' => 'PERMITIR_USUARIO_RESTAURAR',
                 'description' => 'Permitir restaurar usuários excluídos',
-                'module_name' => 'USUARIO'
+                'module_name' => 'USUARIO',
+                'guard_name' => 'api' // ← Importante
             ],
         ];
 
@@ -180,32 +194,38 @@ class PermissionSeeder extends Seeder
             [
                 'name' => 'PERMITIR_SISTEMA_CONFIGURACOES',
                 'description' => 'Permitir acessar configurações do sistema',
-                'module_name' => 'SISTEMA'
+                'module_name' => 'SISTEMA',
+                'guard_name' => 'api' // ← Importante
             ],
             [
                 'name' => 'PERMITIR_SISTEMA_LOGS',
                 'description' => 'Permitir visualizar logs do sistema',
-                'module_name' => 'SISTEMA'
+                'module_name' => 'SISTEMA',
+                'guard_name' => 'api' // ← Importante
             ],
             [
                 'name' => 'PERMITIR_SISTEMA_BACKUP',
                 'description' => 'Permitir realizar backup do sistema',
-                'module_name' => 'SISTEMA'
+                'module_name' => 'SISTEMA',
+                'guard_name' => 'api' // ← Importante
             ],
             [
                 'name' => 'PERMITIR_SISTEMA_DASHBOARD',
                 'description' => 'Permitir acessar dashboard administrativo',
-                'module_name' => 'SISTEMA'
+                'module_name' => 'SISTEMA',
+                'guard_name' => 'api' // ← Importante
             ],
             [
                 'name' => 'PERMITIR_SISTEMA_RELATORIOS',
                 'description' => 'Permitir gerar relatórios do sistema',
-                'module_name' => 'SISTEMA'
+                'module_name' => 'SISTEMA',
+                'guard_name' => 'api' // ← Importante
             ],
             [
                 'name' => 'PERMITIR_SISTEMA_AUDITORIA',
                 'description' => 'Permitir visualizar logs de auditoria',
-                'module_name' => 'SISTEMA'
+                'module_name' => 'SISTEMA',
+                'guard_name' => 'api' // ← Importante
             ],
         ];
 
@@ -224,7 +244,7 @@ class PermissionSeeder extends Seeder
             'name' => 'super-admin',
             'description' => 'Super Administrador com acesso total',
             'module_name' => 'SISTEMA',
-            'guard_name' => 'web'
+            'guard_name' => 'api'
         ]);
 
         // Dar todas as permissões para super-admin
@@ -235,7 +255,7 @@ class PermissionSeeder extends Seeder
             'name' => 'admin',
             'description' => 'Administrador do sistema',
             'module_name' => 'SISTEMA',
-            'guard_name' => 'web'
+            'guard_name' => 'api'
         ]);
 
         // Permissões para admin (exceto algumas críticas)
@@ -252,7 +272,7 @@ class PermissionSeeder extends Seeder
             'name' => 'gestor',
             'description' => 'Gestor com permissões de gerenciamento',
             'module_name' => 'USUARIO',
-            'guard_name' => 'web'
+            'guard_name' => 'api'
         ]);
 
         // Permissões para gestor
