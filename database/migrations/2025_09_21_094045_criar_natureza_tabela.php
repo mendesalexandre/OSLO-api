@@ -21,7 +21,7 @@ return new class extends Migration
 
             $table->integer('natureza_protocolo_id')->nullable();
             $table->integer('natureza_doi_id')->nullable();
-            $table->$table->integer('prazo_validade_legal')->default(0);
+            $table->integer('prazo_validade_legal')->default(0);
             $table->boolean('prenotacao_permitir_dias_corridos')->default(true);
             $table->boolean('prenotacao_permitir_dias_uteis')->default(false);
             $table->boolean('prenotacao_permitir_prorrogacao')->default(false);
