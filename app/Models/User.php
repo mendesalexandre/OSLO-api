@@ -15,7 +15,6 @@ class User extends Authenticatable
     use HasFactory, Notifiable,  HasRoles, HasApiTokens;
 
     protected $table = 'usuario';
-    protected $guard_name = 'api';
 
     const CREATED_AT = 'data_cadastro';
     const UPDATED_AT = 'data_alteracao';

@@ -37,7 +37,7 @@ class NaturezaController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request): JsonResponse
+    public function create(Request $request): JsonResponse
     {
         $this->authorize('PERMITIR_NATUREZA_CRIAR');
 

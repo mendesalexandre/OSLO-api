@@ -289,7 +289,7 @@ class PermissionSeeder extends Seeder
             'name' => 'operador',
             'description' => 'Operador do sistema',
             'module_name' => 'USUARIO',
-            'guard_name' => 'web'
+            'guard_name' => 'api'
         ]);
 
         // Permissões básicas para operador
@@ -310,7 +310,7 @@ class PermissionSeeder extends Seeder
             'name' => 'consulta',
             'description' => 'Apenas visualização',
             'module_name' => 'USUARIO',
-            'guard_name' => 'web'
+            'guard_name' => 'api'
         ]);
 
         // Apenas permissões de visualização
@@ -328,7 +328,7 @@ class PermissionSeeder extends Seeder
             'name' => 'suporte',
             'description' => 'Suporte técnico com acesso a logs e configurações',
             'module_name' => 'SISTEMA',
-            'guard_name' => 'web'
+            'guard_name' => 'api'
         ]);
 
         $suportePermissions = [
