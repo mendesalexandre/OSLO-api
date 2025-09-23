@@ -2,6 +2,7 @@
 
 namespace App\Traits;
 
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 trait AuditableTrait
@@ -47,7 +48,7 @@ trait AuditableTrait
      */
     public function usuarioCriacao()
     {
-        return $this->belongsTo(\App\Models\User::class, 'usuario_criacao_id');
+        return $this->belongsTo(User::class, 'usuario_criacao_id');
     }
 
     /**
@@ -55,7 +56,7 @@ trait AuditableTrait
      */
     public function usuarioAlteracao()
     {
-        return $this->belongsTo(\App\Models\User::class, 'usuario_alteracao_id');
+        return $this->belongsTo(User::class, 'usuario_alteracao_id');
     }
 
     /**
@@ -63,7 +64,7 @@ trait AuditableTrait
      */
     public function usuarioExclusao()
     {
-        return $this->belongsTo(\App\Models\User::class, 'usuario_exclusao_id');
+        return $this->belongsTo(User::class, 'usuario_exclusao_id');
     }
 
     /**

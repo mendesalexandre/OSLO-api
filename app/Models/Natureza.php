@@ -263,7 +263,7 @@ class Natureza extends Model
         return $this->permitir_isencao;
     }
 
-    public function deveGerarSelo(): bool
+    public function permitirGerarSelo(): bool
     {
         return $this->permitir_gerar_selo;
     }
