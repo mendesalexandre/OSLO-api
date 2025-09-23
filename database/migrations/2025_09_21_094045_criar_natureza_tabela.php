@@ -18,6 +18,10 @@ return new class extends Migration
             $table->string('nome');
             $table->text('descricao')->nullable();
 
+
+            $table->integer('natureza_protocolo_id')->nullable();
+            $table->integer('natureza_doi_id')->nullable();
+
             $table->integer('prazo_validade_legal')->default(0);
             $table->boolean('prenotacao_permitir_dias_corridos')->default(true);
             $table->boolean('prenotacao_permitir_dias_uteis')->default(false);
