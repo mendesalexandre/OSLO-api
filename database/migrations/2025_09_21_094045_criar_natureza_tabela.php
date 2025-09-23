@@ -21,8 +21,7 @@ return new class extends Migration
 
             $table->integer('natureza_protocolo_id')->nullable();
             $table->integer('natureza_doi_id')->nullable();
-
-            $table->integer('prazo_validade_legal')->default(0);
+            $table->$table->integer('prazo_validade_legal')->default(0);
             $table->boolean('prenotacao_permitir_dias_corridos')->default(true);
             $table->boolean('prenotacao_permitir_dias_uteis')->default(false);
             $table->boolean('prenotacao_permitir_prorrogacao')->default(false);
@@ -43,6 +42,7 @@ return new class extends Migration
             $table->unsignedBigInteger('usuario_alteracao_id')->nullable()->after('usuario_criacao_id');
             $table->unsignedBigInteger('usuario_exclusao_id')->nullable()->after('usuario_alteracao_id');
 
+            $table->string('nivel_dificuldade')->nullable();
             // Índices para performance
             $table->index('usuario_criacao_id');
             $table->index('usuario_alteracao_id');

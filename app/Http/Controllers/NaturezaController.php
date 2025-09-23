@@ -253,7 +253,7 @@ class NaturezaController extends Controller
                 'required',
                 'string',
                 'max:255',
-                Rule::unique('tipo_servico', 'nome')->ignore($excludeId)
+                Rule::unique('natureza', 'nome')->ignore($excludeId)
             ],
             'descricao' => 'nullable|string',
             'valor' => 'nullable|numeric|min:0|max:999999.99',
