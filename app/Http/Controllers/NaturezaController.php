@@ -18,7 +18,7 @@ class NaturezaController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $this->authorize('PERMITIR_NATUREZA_VISUALIZAR');
+        // $this->authorize('PERMITIR_NATUREZA_VISUALIZAR');
 
         $query = Natureza::disponivel()->comAuditoria();
 

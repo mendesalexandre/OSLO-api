@@ -6,6 +6,7 @@ use App\Models\ONR\CertificadoDigital;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DominioController;
 use App\Http\Controllers\FeriadoController;
+use App\Http\Controllers\NaturezaController;
 use App\Services\ONR\Certidao\CertidaoService;
 use App\Services\ONR\Autenticacao\Autenticacao;
 use App\Http\Controllers\ONR\CertificadoDigitalController;
@@ -143,6 +144,14 @@ Route::middleware(['auth:api'])->group(function () {
         Route::get('/{id}', [DominioController::class, 'show']);
         Route::put('/{id}', [DominioController::class, 'update']);
         Route::delete('/{id}', [DominioController::class, 'destroy']);
+    });
+
+    Route::group(['prefix' => 'naturezas'], function () {
+        Route::get('/', [NaturezaController::class, 'index']);
+        Route::post('/criar', [NaturezaController::class, 'create']);
+        Route::get('/{id}', [NaturezaController::class, 'show']);
+        Route::put('/{id}', [NaturezaController::class, 'update']);
+        Route::delete('/{id}', [NaturezaController::class, 'destroy']);
     });
 });
 

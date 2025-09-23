@@ -11,7 +11,7 @@ class Natureza extends Model
 {
     use HasFactory, AuditableTrait;
 
-    protected $table = 'tipo_servico'; // Mantém a tabela atual
+    protected $table = 'natureza'; // Mantém a tabela atual
 
     // Desabilita os timestamps padrão do Laravel
     public $timestamps = false;
@@ -27,7 +27,6 @@ class Natureza extends Model
         'descricao',
         'valor',
         'opcoes',
-        'registro_ativo',
         'permitir_edicao_minuta',
         'permitir_isencao',
         'permitir_gerar_selo',
@@ -50,7 +49,7 @@ class Natureza extends Model
         'id' => 'integer',
         'uuid' => 'string',
         'is_ativo' => 'boolean',
-        'registro_ativo' => 'boolean',
+        'is_ativo' => 'boolean',
         'permitir_edicao_minuta' => 'boolean',
         'permitir_isencao' => 'boolean',
         'permitir_gerar_selo' => 'boolean',
@@ -111,7 +110,7 @@ class Natureza extends Model
 
     public function scopeRegistroAtivo($query)
     {
-        return $query->where('registro_ativo', true);
+        return $query->where('is_ativo', true);
     }
 
     public function scopeNaoExcluido($query)
