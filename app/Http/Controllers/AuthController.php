@@ -13,7 +13,6 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Tymon\JWTAuth\Contracts\JWTSubject; // <- Adicionar este import
 
 class AuthController extends Controller
 {
