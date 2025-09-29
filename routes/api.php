@@ -4,7 +4,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Models\ONR\CertificadoDigital;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CidadeController;
 use App\Http\Controllers\DominioController;
+use App\Http\Controllers\EstadoController;
 use App\Http\Controllers\FeriadoController;
 use App\Http\Controllers\NaturezaController;
 use App\Services\ONR\Certidao\CertidaoService;
@@ -152,6 +154,49 @@ Route::middleware(['auth:api'])->group(function () {
         Route::get('/{id}', [NaturezaController::class, 'show']);
         Route::put('/{id}', [NaturezaController::class, 'update']);
         Route::delete('/{id}', [NaturezaController::class, 'destroy']);
+    });
+
+
+
+
+    /*
+|--------------------------------------------------------------------------
+| ROTAS DE ESTADOS
+|--------------------------------------------------------------------------
+*/
+    Route::prefix('estados')->group(function () {
+        // CRUD básico
+        Route::get('/', [EstadoController::class, 'index'])->name('estados.index');
+        Route::post('/', [EstadoController::class, 'store'])->name('estados.store');
+        Route::get('/{estado}', [EstadoController::class, 'show'])->name('estados.show');
+        Route::put('/{estado}', [EstadoController::class, 'update'])->name('estados.update');
+        Route::delete('/{estado}', [EstadoController::class, 'destroy'])->name('estados.destroy');
+
+        // Rotas especiais
+        Route::get('/ativos/lista', [EstadoController::class, 'ativos'])->name('estados.ativos');
+        Route::patch('/{estado}/toggle-status', [EstadoController::class, 'toggleStatus'])->name('estados.toggle-status');
+        Route::patch('/{id}/restore', [EstadoController::class, 'restore'])->name('estados.restore');
+    });
+
+    /*
+|--------------------------------------------------------------------------
+| ROTAS DE CIDADES
+|--------------------------------------------------------------------------
+*/
+    Route::prefix('cidades')->group(function () {
+        // CRUD básico
+        Route::get('/', [CidadeController::class, 'index'])->name('cidades.index');
+        Route::post('/', [CidadeController::class, 'store'])->name('cidades.store');
+        Route::get('/{cidade}', [CidadeController::class, 'show'])->name('cidades.show');
+        Route::put('/{cidade}', [CidadeController::class, 'update'])->name('cidades.update');
+        Route::delete('/{cidade}', [CidadeController::class, 'destroy'])->name('cidades.destroy');
+
+        // Rotas especiais
+        Route::get('/ativas/lista', [CidadeController::class, 'ativas'])->name('cidades.ativas');
+        Route::get('/estado/{estadoId}', [CidadeController::class, 'porEstado'])->name('cidades.por-estado');
+        Route::get('/buscar/termo', [CidadeController::class, 'buscar'])->name('cidades.buscar');
+        Route::patch('/{cidade}/toggle-status', [CidadeController::class, 'toggleStatus'])->name('cidades.toggle-status');
+        Route::patch('/{id}/restore', [CidadeController::class, 'restore'])->name('cidades.restore');
     });
 });
 
