@@ -14,6 +14,9 @@ class DatabaseSeeder extends Seeder
             UsuarioSeeder::class,
             FeriadoSeeder::class,
             PermissionSeeder::class,
+            DominioSeeder::class,
+            EstadoSeeder::class,
+            CidadeSeeder::class
         ]);
     }
 }
