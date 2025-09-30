@@ -289,6 +289,20 @@ class CidadeController extends Controller
         ]);
     }
 
+    /** Listar cidades pelo Código do IBGE */
+    public function porCodigoIbge($codigoIbge): JsonResponse
+    {
+        $cidades = Cidade::query()
+            ->where('ibge_codigo', '=', $codigoIbge)
+            ->orderBy('nome')
+            ->first();
+
+        return response()->json([
+            'success' => true,
+            'data' => $cidades
+        ]);
+    }
+
     /**
      * Listar apenas cidades ativas (para selects/dropdowns)
      */

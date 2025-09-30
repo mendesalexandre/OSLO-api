@@ -181,13 +181,14 @@ Route::prefix('estados')->group(function () {
 | ROTAS DE CIDADES
 |--------------------------------------------------------------------------
 */
-Route::prefix('cidades')->group(function () {
+Route::prefix('cidade')->group(function () {
     // CRUD básico
     Route::get('/', [CidadeController::class, 'index'])->name('cidades.index');
     Route::post('/', [CidadeController::class, 'store'])->name('cidades.store');
     Route::get('/{cidade}', [CidadeController::class, 'show'])->name('cidades.show');
     Route::put('/{cidade}', [CidadeController::class, 'update'])->name('cidades.update');
     Route::delete('/{cidade}', [CidadeController::class, 'destroy'])->name('cidades.destroy');
+    Route::get('/codigo-ibge/{codigoIbge}', [CidadeController::class, 'porCodigoIbge'])->name('cidades.por-codigoIbge');
 
     // Rotas especiais
     Route::get('/ativas/lista', [CidadeController::class, 'ativas'])->name('cidades.ativas');
