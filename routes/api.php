@@ -148,7 +148,7 @@ Route::group(['prefix' => 'dominios'], function () {
     Route::delete('/{id}', [DominioController::class, 'destroy']);
 });
 
-Route::group(['prefix' => 'naturezas'], function () {
+Route::group(['prefix' => 'natureza'], function () {
     Route::get('/', [NaturezaController::class, 'index']);
     Route::post('/criar', [NaturezaController::class, 'create']);
     Route::get('/{id}', [NaturezaController::class, 'show']);

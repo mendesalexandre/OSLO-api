@@ -16,7 +16,8 @@ class DatabaseSeeder extends Seeder
             PermissionSeeder::class,
             DominioSeeder::class,
             EstadoSeeder::class,
-            CidadeSeeder::class
+            CidadeSeeder::class,
+            NaturezaSeeder::class
         ]);
     }
 }

@@ -16,22 +16,36 @@ class NaturezaController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request): JsonResponse
+    // public function index(Request $request): JsonResponse
+    // {
+    //     // $this->authorize('PERMITIR_NATUREZA_VISUALIZAR');
+
+    //     $query = Natureza::disponivel()->comAuditoria();
+
+    //     $this->applyFilters($query, $request);
+
+    //     $naturezas = $query->ordenadoPorExibicao()->paginate(
+    //         $request->get('per_page', 15)
+    //     );
+
+    //     return $this->paginatedResponse($naturezas, [
+    //         'user_permissions' => $this->getUserModulePermissions(),
+    //         'opcoes_sistema' => $this->getOpcoesSistema()
+    //     ]);
+    // }
+
+    public function index(Request $request)
     {
-        // $this->authorize('PERMITIR_NATUREZA_VISUALIZAR');
+        $query = Natureza::query();
 
-        $query = Natureza::disponivel()->comAuditoria();
+        // Verifica se existe o filtro de nome
+        if ($request->has('filtro.nome')) {
+            $filtro = $request->input('filtro.nome');
+            $query->where('nome', 'ILIKE', "%{$filtro}%");
+        }
 
-        $this->applyFilters($query, $request);
-
-        $naturezas = $query->ordenadoPorExibicao()->paginate(
-            $request->get('per_page', 15)
-        );
-
-        return $this->paginatedResponse($naturezas, [
-            'user_permissions' => $this->getUserModulePermissions(),
-            'opcoes_sistema' => $this->getOpcoesSistema()
-        ]);
+        // Retorna os resultados
+        return response()->json($query->get());
     }
 
     /**
