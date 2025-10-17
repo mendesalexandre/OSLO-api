@@ -13,8 +13,27 @@ return new class extends Migration
             $table->boolean('is_ativo')->default(true);
             $table->string('nome');
             $table->string('cpf_cnpj', 14);
+
+            // RG
             $table->string('rg_ie')->nullable();
-            $table->string('passporte')->nullable();
+            $table->string('rg_orgao_expedidor')->nullable();
+            $table->char('rg_uf_emissao', 2)->nullable();
+            $table->date('rg_data_emissao')->nullable();
+
+            // CNH
+            $table->string('cnh')->nullable();
+            $table->string('cnh_orgao_expedidor')->nullable();
+            $table->date('cnh_data_emissao')->nullable();
+            $table->date('cnh_data_validade')->nullable();
+            $table->string('cnh_categoria', 10)->nullable(); // A, B, C, D, E, AB, etc
+
+            // Passaporte
+            $table->string('passaporte')->nullable();
+            $table->string('passaporte_orgao_expedidor')->nullable();
+            $table->char('passaporte_pais_emissao', 3)->nullable(); // Código ISO do país
+            $table->date('passaporte_data_emissao')->nullable();
+            $table->date('passaporte_data_validade')->nullable();
+
             $table->string('email', 100)->nullable();
             $table->date('data_nascimento')->nullable();
             $table->date('data_casamento')->nullable();
