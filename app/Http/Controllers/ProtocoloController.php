@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Protocolo;
 use Illuminate\Http\Request;
 
 class ProtocoloController extends Controller
@@ -37,8 +38,9 @@ class ProtocoloController extends Controller
             'status' => 'string',
         ]);
 
-        Protocolo::create($validated);
+        $protocolo = Protocolo::query()
+            ->create($validated);
 
-        return response()->json(['message' => 'Protocolo criado com sucesso!'], 201);
+        return response()->json($protocolo, 201);
     }
 }
