@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Configuracao;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -46,7 +47,7 @@ class ConfiguracaoSeeder extends Seeder
         ];
 
         foreach ($configuracoes as $config) {
-            DB::table('configuracao')->updateOrInsert(
+            Configuracao::query()->updateOrInsert(
                 ['chave' => $config['chave']],
                 $config
             );
