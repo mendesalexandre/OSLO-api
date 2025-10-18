@@ -15,7 +15,7 @@ return new class extends Migration
             $table->date('data_reingresso')->nullable();
             $table->date('data_limite')->nullable();
             $table->unsignedBigInteger('solicitante_id');
-            $table->unsignedBigInteger('atendente_id')->nullable();
+            $table->foreignId('atendente_id')->nullable()->constrained('usuario');
             $table->unsignedBigInteger('cliente_id');
             $table->foreignId('natureza_id')->constrained('natureza');
             $table->unsignedBigInteger('reprotocolo_origem_id')->nullable();
