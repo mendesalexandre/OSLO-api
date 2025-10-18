@@ -9,7 +9,7 @@ return new class extends Migration
 
     public function up(): void
     {
-        Schema::create('etapas', function (Blueprint $table) {
+        Schema::create('etapa', function (Blueprint $table) {
             $table->id();
             $table->boolean('is_ativo')->default(true);
             $table->string('nome', 100);
@@ -33,6 +33,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('etapas');
+        Schema::dropIfExists('etapa');
     }
 };

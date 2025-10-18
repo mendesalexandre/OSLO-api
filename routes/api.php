@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\EtapaController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Models\ONR\CertificadoDigital;
@@ -197,6 +198,10 @@ Route::prefix('cidade')->group(function () {
     Route::patch('/{cidade}/toggle-status', [CidadeController::class, 'toggleStatus'])->name('cidades.toggle-status');
     Route::patch('/{id}/restore', [CidadeController::class, 'restore'])->name('cidades.restore');
 });
+
+
+Route::apiResource('etapa', EtapaController::class);
+
 // }); FINAL ROTAS PROTEGIDAS
 
 Route::get('/versao', [VersaoController::class, 'version']);

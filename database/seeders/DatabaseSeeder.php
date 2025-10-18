@@ -12,6 +12,7 @@ class DatabaseSeeder extends Seeder
         // User::factory()->create();
         $this->call([
             TipoDocumentoSeeder::class,
+            EtapaSeeder::class,
             UsuarioSeeder::class,
             FeriadoSeeder::class,
             PermissionSeeder::class,
