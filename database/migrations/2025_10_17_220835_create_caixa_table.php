@@ -14,7 +14,7 @@ return new class extends Migration
             $table->string('nome', 100);
             $table->string('descricao', 255)->nullable();
             $table->decimal('saldo_inicial', 15, 2)->default(0);
-            $table->date('data_saldo_inicial')->useCurrent();
+            $table->date('data_saldo_inicial')->nullable();
             $table->decimal('saldo_atual', 15, 2)->default(0);
             $table->timestamp('data_cadastro')->useCurrent();
             $table->timestamp('data_alteracao')->nullable()->default(null);
