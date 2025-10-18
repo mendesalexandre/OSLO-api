@@ -17,10 +17,10 @@ return new class extends Migration
             $table->unsignedBigInteger('solicitante_id');
             $table->unsignedBigInteger('atendente_id')->nullable();
             $table->unsignedBigInteger('cliente_id');
-            $table->unsignedBigInteger('natureza_id');
+            $table->foreignId('natureza_id')->constrained('natureza');
             $table->unsignedBigInteger('reprotocolo_origem_id')->nullable();
-            $table->unsignedBigInteger('tipo_suspensao_id')->nullable();
-            $table->unsignedBigInteger('tipo_documento_id')->nullable();
+            $table->foreignId('tipo_suspensao_id')->nullable()->constrained('tipo_suspensao');
+            $table->foreignId('tipo_documento_id')->nullable()->constrained('tipo_documento');
             $table->unsignedBigInteger('vinculo_id')->nullable();
             $table->boolean('entregue')->default(false);
             $table->unsignedBigInteger('etapa_id')->nullable();
