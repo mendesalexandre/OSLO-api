@@ -8,9 +8,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Transacao extends Model
 {
-    use SoftDeletes, SoftDeletes;
+    use SoftDeletes;
 
     protected $table = 'transacao';
+
+    public $timestamps = false;
 
     const CREATED_AT = 'data_cadastro';
     const UPDATED_AT = 'data_alteracao';
@@ -52,12 +54,17 @@ class Transacao extends Model
 
     public function pessoa(): BelongsTo
     {
-        return $this->belongsTo(Pessoa::class);
+        return $this->belongsTo(IndicadorPessoal::class);
     }
 
     public function usuario(): BelongsTo
     {
         return $this->belongsTo(User::class, 'usuario_id');
+    }
+
+    public function pagamentos()
+    {
+        return $this->hasMany(TransacaoPagamento::class);
     }
 
     // Scopes

@@ -19,7 +19,10 @@ class DatabaseSeeder extends Seeder
             DominioSeeder::class,
             EstadoSeeder::class,
             CidadeSeeder::class,
-            NaturezaSeeder::class
+            NaturezaSeeder::class,
+            TipoPagamentoSeeder::class,
+            // MeioPagamentoSeeder::class,
+            // TransacaoSeeder::class,
         ]);
     }
 }

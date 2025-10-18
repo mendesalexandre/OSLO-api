@@ -3,13 +3,14 @@
 namespace App\Models;
 
 use App\Enums\CategoriaTipoEnum;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Categoria extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, HasFactory;
 
     protected $table = 'categoria';
 
@@ -20,17 +21,17 @@ class Categoria extends Model
     const DELETED_AT = 'data_exclusao';
 
     protected $fillable = [
+        'is_ativo',
         'nome',
         'descricao',
         'tipo',
         'cor',
         'icone',
-        'is_ativo',
     ];
 
     protected $casts = [
-        'tipo' => CategoriaTipoEnum::class,
         'is_ativo' => 'boolean',
+        'tipo' => CategoriaTipoEnum::class,
     ];
 
     // Relacionamentos
