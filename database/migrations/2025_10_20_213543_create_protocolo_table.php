@@ -26,7 +26,7 @@ return new class extends Migration
             $table->unsignedBigInteger('etapa_id')->nullable();
             $table->unsignedBigInteger('etapa_usuario_id')->nullable();
             $table->unsignedBigInteger('etapa_anterior_id')->nullable();
-            $table->unsignedBigInteger('finalizador_id')->nullable();
+            $table->foreignId('finalizador_id')->nullable()->constrained('usuario');
             $table->text('motivo_cancelamento')->nullable();
             $table->unsignedBigInteger('interessado_id')->nullable();
             $table->unsignedBigInteger('tomador_id')->nullable();
