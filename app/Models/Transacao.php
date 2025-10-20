@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\TransacaoStatusEnum;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -11,8 +12,6 @@ class Transacao extends Model
     use SoftDeletes;
 
     protected $table = 'transacao';
-
-    public $timestamps = false;
 
     const CREATED_AT = 'data_cadastro';
     const UPDATED_AT = 'data_alteracao';
@@ -123,5 +122,38 @@ class Transacao extends Model
     public function valorRestante(): float
     {
         return (float) ($this->valor - $this->valor_pago);
+    }
+
+    // Métodos de pagamento
+    public function totalPago(): float
+    {
+        return (float) $this->pagamentos()->pagos()->sum('valor_pago');
+    }
+
+    public function valorRestantePagar(): float
+    {
+        return (float) ($this->valor - $this->totalPago());
+    }
+
+    public function isParcialmentePago(): bool
+    {
+        $totalPago = $this->totalPago();
+        return $totalPago > 0 && $totalPago < $this->valor;
+    }
+
+    public function isTotalmentePago(): bool
+    {
+        return $this->totalPago() >= $this->valor;
+    }
+
+    public function verificarStatusPagamento(): void
+    {
+        if ($this->isTotalmentePago()) {
+            $this->update([
+                'status' => TransacaoStatusEnum::PAGO,
+                'valor_pago' => $this->totalPago(),
+                'data_pagamento' => now(),
+            ]);
+        }
     }
 }

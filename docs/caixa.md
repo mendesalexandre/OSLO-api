@@ -11,3 +11,18 @@ etapa
     data_cadastro
     data_alteracao
     data_exclusao
+
+transacao:
+
+-   tipo (ENTRADA/SAIDA)
+-   natureza (CONTA_PAGAR, CONTA_RECEBER, TRANSFERENCIA, AJUSTE)
+-   categoria_id (FK -> categorias)
+-   ...
+
+categorias:
+
+-   id
+-   nome (Saúde, Educação, Alimentação...)
+-   tipo (DESPESA/RECEITA)
+-   cor
+-   icone
