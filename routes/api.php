@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Models\ONR\CertificadoDigital;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CaixaController;
+use App\Http\Controllers\CaixaMovimentoController;
 use App\Http\Controllers\CidadeController;
 use App\Http\Controllers\DominioController;
 use App\Http\Controllers\EstadoController;
@@ -14,6 +15,7 @@ use App\Http\Controllers\NaturezaController;
 use App\Services\ONR\Certidao\CertidaoService;
 use App\Services\ONR\Autenticacao\Autenticacao;
 use App\Http\Controllers\ONR\CertificadoDigitalController;
+use App\Http\Controllers\TransacaoController;
 use App\Http\Controllers\VersaoController;
 use Illuminate\Support\Facades\Storage;
 
@@ -203,6 +205,51 @@ Route::prefix('cidade')->group(function () {
 
 Route::apiResource('etapa', EtapaController::class);
 Route::apiResource('caixa', CaixaController::class);
+// ========================================
+// CATEGORIA
+// ========================================
+// Route::apiResource('categoria', CategoriaController::class);
+
+// ========================================
+// TRANSAÇÃO
+// ========================================
+Route::apiResource('transacao', TransacaoController::class);
+// Rotas extras de Transação
+Route::prefix('transacao')->group(function () {
+    Route::post('{id}/pagar', [TransacaoController::class, 'pagar']);
+    Route::post('{id}/cancelar', [TransacaoController::class, 'cancelar']);
+});
+
+// Consultas de Transação
+Route::prefix('transacao')->group(function () {
+    Route::get('pendentes', [TransacaoController::class, 'pendentes']);
+    Route::get('vencidas', [TransacaoController::class, 'vencidas']);
+    Route::get('contas-pagar', [TransacaoController::class, 'contasPagar']);
+    Route::get('contas-receber', [TransacaoController::class, 'contasReceber']);
+});
+
+// ========================================
+// CAIXA MOVIMENTO (Abertura/Fechamento)
+// ========================================
+Route::prefix('caixa-movimento')->group(function () {
+    // CRUD
+    Route::get('/', [CaixaMovimentoController::class, 'index']);
+    Route::get('{id}', [CaixaMovimentoController::class, 'show']);
+
+    // Ações
+    Route::post('abrir', [CaixaMovimentoController::class, 'abrir']);
+    Route::post('{id}/fechar', [CaixaMovimentoController::class, 'fechar']);
+    Route::post('{id}/conferir', [CaixaMovimentoController::class, 'conferir']);
+    Route::post('{id}/reabrir', [CaixaMovimentoController::class, 'reabrir']);
+
+    // Consultas
+    Route::get('status/abertos', [CaixaMovimentoController::class, 'abertos']);
+    Route::get('status/fechados', [CaixaMovimentoController::class, 'fechados']);
+    Route::get('status/com-diferenca', [CaixaMovimentoController::class, 'comDiferenca']);
+});
+
+// Movimento atual de um caixa específico
+Route::get('caixa/{id}/movimento-atual', [CaixaMovimentoController::class, 'movimentoAtual']);
 
 // }); FINAL ROTAS PROTEGIDAS
 

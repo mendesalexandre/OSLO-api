@@ -28,10 +28,8 @@ class Caixa extends Model
 
     protected $casts = [
         'is_ativo' => 'boolean',
-        // 'saldo_inicial' => 'decimal:2',
-        // 'saldo_atual' => 'decimal:2',
-        'saldo_inicial' => 'float',
-        'saldo_atual' => 'float',
+        'saldo_inicial' => 'decimal:2',
+        'saldo_atual' => 'decimal:2',
         'requer_abertura' => 'boolean',
         'data_cadastro' => 'datetime',
         'data_alteracao' => 'datetime',
