@@ -7,6 +7,7 @@ use App\Models\ONR\CertificadoDigital;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CaixaController;
 use App\Http\Controllers\CaixaMovimentoController;
+use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\CidadeController;
 use App\Http\Controllers\DominioController;
 use App\Http\Controllers\EstadoController;
@@ -208,7 +209,7 @@ Route::apiResource('caixa', CaixaController::class);
 // ========================================
 // CATEGORIA
 // ========================================
-// Route::apiResource('categoria', CategoriaController::class);
+Route::apiResource('categoria', CategoriaController::class);
 
 // ========================================
 // TRANSAÇÃO

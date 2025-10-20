@@ -2,7 +2,10 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\TransacaoTipo;
+use App\Enums\TransacaoNatureza;
 use App\Enums\TransacaoNaturezaEnum;
+use App\Enums\TransacaoStatus;
 use App\Enums\TransacaoStatusEnum;
 use App\Enums\TransacaoTipoEnum;
 use Illuminate\Foundation\Http\FormRequest;
@@ -33,15 +36,15 @@ class TransacaoRequest extends FormRequest
             'observacao' => 'nullable|string',
             'documento' => 'nullable|string|max:100',
             'pessoa_id' => 'nullable|exists:pessoa,id',
-            'usuario_id' => 'required|exists:users,id',
+            'usuario_id' => 'required|exists:usuario,id',
             'is_ativo' => 'boolean',
         ];
 
         // No update, os campos podem ser opcionais
         if ($this->isMethod('PUT') || $this->isMethod('PATCH')) {
             $rules['caixa_id'] = 'sometimes|required|exists:caixa,id';
-            $rules['tipo'] = ['sometimes', 'required', new Enum(TransacaoTipoEnum::class)];
-            $rules['natureza'] = ['sometimes', 'required', new Enum(TransacaoNaturezaEnum::class)];
+            $rules['tipo'] = ['sometimes', 'required', new Enum(TransacaoTipo::class)];
+            $rules['natureza'] = ['sometimes', 'required', new Enum(TransacaoNatureza::class)];
             $rules['descricao'] = 'sometimes|required|string|max:255';
             $rules['valor'] = 'sometimes|required|numeric|min:0';
             $rules['data_vencimento'] = 'sometimes|required|date';
