@@ -61,7 +61,7 @@ class TransacaoController extends Controller
             'pagamentos.meioPagamento'
         ])->findOrFail($id);
 
-        $this->authorize('view', $transacao);
+        // $this->authorize('view', $transacao);
 
         return response()->json($transacao);
     }
@@ -102,13 +102,42 @@ class TransacaoController extends Controller
 
         // $this->authorize('pagar', $transacao);
 
+        // Verificar se a transação já está paga
+        if ($transacao->isTotalmentePago()) {
+            return response()->json([
+                'error' => 'Esta transação já está totalmente paga',
+                'valor_total' => $transacao->valor,
+                'valor_pago' => $transacao->totalPago(),
+                'valor_restante' => 0
+            ], 422);
+        }
+
+        // Verificar se está cancelada
+        if ($transacao->isCancelado()) {
+            return response()->json([
+                'error' => 'Não é possível pagar uma transação cancelada'
+            ], 422);
+        }
+
         $validated = $request->validate([
-            'valor_pago' => 'required|numeric|min:0',
+            'valor_pago' => 'required|numeric|min:0.01',
             'tipo_pagamento_id' => 'required|exists:tipo_pagamento,id',
             'meio_pagamento_id' => 'nullable|exists:meio_pagamento,id',
-            'pessoa_id' => 'nullable|exists:indicador_pessoal,id',
+            'pessoa_id' => 'nullable|exists:pessoa,id',
             'observacao' => 'nullable|string|max:500',
         ]);
+
+        // Verificar se o valor pago não excede o valor restante
+        $valorRestante = $transacao->valorRestantePagar();
+
+        if ($validated['valor_pago'] > $valorRestante) {
+            return response()->json([
+                'error' => 'O valor do pagamento não pode ser maior que o valor restante',
+                'valor_pago_tentado' => $validated['valor_pago'],
+                'valor_restante' => $valorRestante,
+                'sugestao' => 'Use o valor restante para finalizar o pagamento'
+            ], 422);
+        }
 
         // Criar pagamento
         $pagamento = $transacao->pagamentos()->create([
@@ -130,11 +159,16 @@ class TransacaoController extends Controller
 
         $transacao->load('pagamentos');
 
+        $valorRestanteAtualizado = $transacao->valorRestantePagar();
+
         return response()->json([
-            'message' => 'Pagamento registrado com sucesso',
+            'message' => $valorRestanteAtualizado > 0
+                ? 'Pagamento parcial registrado com sucesso'
+                : 'Transação paga totalmente com sucesso',
             'transacao' => $transacao,
             'pagamento' => $pagamento,
-            'valor_restante' => $transacao->valorRestantePagar()
+            'valor_restante' => $valorRestanteAtualizado,
+            'status_pagamento' => $valorRestanteAtualizado > 0 ? 'PARCIAL' : 'TOTAL'
         ]);
     }
 
