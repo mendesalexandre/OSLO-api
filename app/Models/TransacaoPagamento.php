@@ -60,7 +60,7 @@ class TransacaoPagamento extends Model
 
     public function pessoa(): BelongsTo
     {
-        return $this->belongsTo(Pessoa::class);
+        return $this->belongsTo(IndicadorPessoal::class);
     }
 
     // Scopes

@@ -99,7 +99,7 @@ class TransacaoObserver
         $valorNovo = $transacao->valor_pago;
         $diferenca = $valorNovo - $valorAntigo;
 
-        if ($transacao->tipo === TransacaoTipo::ENTRADA) {
+        if ($transacao->tipo === TransacaoTipoEnum::ENTRADA) {
             $caixa->increment('saldo_atual', $diferenca);
         } else {
             $caixa->decrement('saldo_atual', $diferenca);

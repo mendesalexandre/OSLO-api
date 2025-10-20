@@ -13,7 +13,7 @@ class TransacaoController extends Controller
 {
     public function index(): JsonResponse
     {
-        $this->authorize('viewAny', Transacao::class);
+        // $this->authorize('viewAny', Transacao::class);
 
         $transacoes = Transacao::with([
             'caixa',
@@ -100,13 +100,13 @@ class TransacaoController extends Controller
     {
         $transacao = Transacao::findOrFail($id);
 
-        $this->authorize('pagar', $transacao);
+        // $this->authorize('pagar', $transacao);
 
         $validated = $request->validate([
             'valor_pago' => 'required|numeric|min:0',
             'tipo_pagamento_id' => 'required|exists:tipo_pagamento,id',
             'meio_pagamento_id' => 'nullable|exists:meio_pagamento,id',
-            'pessoa_id' => 'nullable|exists:pessoa,id',
+            'pessoa_id' => 'nullable|exists:indicador_pessoal,id',
             'observacao' => 'nullable|string|max:500',
         ]);
 

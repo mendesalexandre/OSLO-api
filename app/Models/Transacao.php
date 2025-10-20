@@ -13,6 +13,8 @@ class Transacao extends Model
 
     protected $table = 'transacao';
 
+    public $timestamps = false;
+
     const CREATED_AT = 'data_cadastro';
     const UPDATED_AT = 'data_alteracao';
     const DELETED_AT = 'data_exclusao';
@@ -20,6 +22,8 @@ class Transacao extends Model
     protected $fillable = [
         'caixa_id',
         'tipo',
+        'natureza',
+        'categoria_id',
         'categoria',
         'descricao',
         'valor',
@@ -46,6 +50,13 @@ class Transacao extends Model
     ];
 
     // Relacionamentos
+
+    public function categoria(): BelongsTo
+    {
+        return $this->belongsTo(Categoria::class);
+    }
+
+
     public function caixa(): BelongsTo
     {
         return $this->belongsTo(Caixa::class);
@@ -64,6 +75,16 @@ class Transacao extends Model
     public function pagamentos()
     {
         return $this->hasMany(TransacaoPagamento::class);
+    }
+
+    public function tipoPagamento(): BelongsTo
+    {
+        return $this->belongsTo(TipoPagamento::class);
+    }
+
+    public function meioPagamento(): BelongsTo
+    {
+        return $this->belongsTo(MeioPagamento::class);
     }
 
     // Scopes
