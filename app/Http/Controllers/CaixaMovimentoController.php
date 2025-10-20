@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Caixa;
 use App\Models\CaixaMovimento;
 use App\Enums\CaixaMovimentoStatus;
+use App\Enums\CaixaMovimentoStatusEnum;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -50,6 +51,7 @@ class CaixaMovimentoController extends Controller
             'observacao_abertura' => 'nullable|string|max:500',
         ]);
 
+        /** @var Caixa $caixa */
         $caixa = Caixa::findOrFail($validated['caixa_id']);
 
         // Verificar se já existe movimento aberto para este caixa
@@ -67,7 +69,7 @@ class CaixaMovimentoController extends Controller
             'saldo_inicial_informado' => $validated['saldo_inicial_informado'],
             'saldo_inicial_sistema' => $caixa->saldo_atual,
             'observacao_abertura' => $validated['observacao_abertura'] ?? null,
-            'status' => CaixaMovimentoStatus::ABERTO,
+            'status' => CaixaMovimentoStatusEnum::ABERTO,
         ]);
 
         $movimento->load(['caixa', 'usuarioAbertura']);
