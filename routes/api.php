@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Models\ONR\CertificadoDigital;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CaixaController;
 use App\Http\Controllers\CidadeController;
 use App\Http\Controllers\DominioController;
 use App\Http\Controllers\EstadoController;
@@ -201,6 +202,7 @@ Route::prefix('cidade')->group(function () {
 
 
 Route::apiResource('etapa', EtapaController::class);
+Route::apiResource('caixa', CaixaController::class);
 
 // }); FINAL ROTAS PROTEGIDAS
 

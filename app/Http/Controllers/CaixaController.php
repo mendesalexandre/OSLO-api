@@ -10,7 +10,7 @@ class CaixaController extends Controller
 {
     public function index(): JsonResponse
     {
-        $this->authorize('viewAny', Caixa::class);
+        // $this->authorize('viewAny', Caixa::class);
 
         $caixas = Caixa::all();
 

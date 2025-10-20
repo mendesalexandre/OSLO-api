@@ -9,7 +9,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class CaixaMovimentoController extends Controller
-{
+{s
     public function index(): JsonResponse
     {
         $this->authorize('viewAny', CaixaMovimento::class);
