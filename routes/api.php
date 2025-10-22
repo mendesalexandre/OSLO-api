@@ -7,6 +7,7 @@ use App\Models\ONR\CertificadoDigital;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CaixaController;
 use App\Http\Controllers\CaixaMovimentoController;
+use App\Http\Controllers\CaixaOperacaoController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\CidadeController;
 use App\Http\Controllers\DominioController;
@@ -251,6 +252,25 @@ Route::prefix('caixa-movimento')->group(function () {
 
 // Movimento atual de um caixa específico
 Route::get('caixa/{id}/movimento-atual', [CaixaMovimentoController::class, 'movimentoAtual']);
+
+
+Route::prefix('caixa-operacao')->group(function () {
+    // Listar
+    Route::get('/', [CaixaOperacaoController::class, 'index']);
+    Route::get('{id}', [CaixaOperacaoController::class, 'show']);
+
+    // Operações
+    Route::post('sangria', [CaixaOperacaoController::class, 'sangria']);
+    Route::post('reforco', [CaixaOperacaoController::class, 'reforco']);
+    Route::post('transferir', [CaixaOperacaoController::class, 'transferir']);
+    Route::post('{id}/estornar', [CaixaOperacaoController::class, 'estornar']);
+
+    // Consultas
+    Route::get('tipo/sangrias', [CaixaOperacaoController::class, 'sangrias']);
+    Route::get('tipo/reforcos', [CaixaOperacaoController::class, 'reforcos']);
+    Route::get('tipo/transferencias', [CaixaOperacaoController::class, 'transferencias']);
+    Route::get('caixa/{id}', [CaixaOperacaoController::class, 'porCaixa']);
+});
 
 // }); FINAL ROTAS PROTEGIDAS
 
