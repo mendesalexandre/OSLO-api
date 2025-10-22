@@ -2,8 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\CaixaOperacao;
 use App\Models\Transacao;
 use App\Models\TransacaoPagamento;
+use App\Observers\CaixaOperacaoObserver;
 use App\Observers\TransacaoObserver;
 use App\Observers\TransacaoPagamentoObserver;
 use Illuminate\Support\ServiceProvider;
@@ -26,6 +28,7 @@ class EventServiceProvider extends ServiceProvider
         // Registrar Observers
         Transacao::observe(TransacaoObserver::class);
         TransacaoPagamento::observe(TransacaoPagamentoObserver::class);
+        CaixaOperacao::observe(CaixaOperacaoObserver::class);
     }
 
     /**
