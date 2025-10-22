@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\TransacaoNaturezaEnum;
 use App\Models\Transacao;
 use App\Http\Requests\TransacaoRequest;
 use App\Enums\TransacaoStatus;
 use App\Enums\TransacaoStatusEnum;
+use App\Enums\TransacaoTipoEnum;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class TransacaoController extends Controller
 {
@@ -248,5 +251,65 @@ class TransacaoController extends Controller
             ->get();
 
         return response()->json($transacoes);
+    }
+
+    // TransacaoController
+    public function transferir(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'caixa_origem_id' => 'required|exists:caixa,id',
+            'caixa_destino_id' => 'required|exists:caixa,id|different:caixa_origem_id',
+            'valor' => 'required|numeric|min:0.01',
+            'descricao' => 'required|string|max:255',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            // Criar transação de SAÍDA no caixa origem
+            $transacaoSaida = Transacao::create([
+                'caixa_id' => $validated['caixa_origem_id'],
+                'tipo' => TransacaoTipoEnum::SAIDA,
+                'natureza' => TransacaoNaturezaEnum::TRANSFERENCIA,
+                'descricao' => $validated['descricao'],
+                'valor' => $validated['valor'],
+                'status' => TransacaoStatusEnum::PAGO,
+                'data_vencimento' => now(),
+                'data_pagamento' => now(),
+                'valor_pago' => $validated['valor'],
+                'usuario_id' => auth()->id(),
+            ]);
+
+            // Criar transação de ENTRADA no caixa destino
+            $transacaoEntrada = Transacao::create([
+                'caixa_id' => $validated['caixa_destino_id'],
+                'tipo' => TransacaoTipoEnum::ENTRADA,
+                'natureza' => TransacaoNaturezaEnum::TRANSFERENCIA,
+                'descricao' => $validated['descricao'],
+                'valor' => $validated['valor'],
+                'status' => TransacaoStatusEnum::PAGO,
+                'data_vencimento' => now(),
+                'data_pagamento' => now(),
+                'valor_pago' => $validated['valor'],
+                'usuario_id' => auth()->id(),
+                'transacao_vinculada_id' => $transacaoSaida->id,
+            ]);
+
+            // Vincular as duas
+            $transacaoSaida->update(['transacao_vinculada_id' => $transacaoEntrada->id]);
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Transferência realizada com sucesso',
+                'transacao_saida' => $transacaoSaida,
+                'transacao_entrada' => $transacaoEntrada
+            ], 201);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'error' => 'Erro ao realizar transferência',
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 }
