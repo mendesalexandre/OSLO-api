@@ -12,7 +12,6 @@ class TransacaoPagamento extends Model
 
     protected $table = 'transacao_pagamento';
 
-    public $timestamps = false;
 
     const CREATED_AT = 'data_cadastro';
     const UPDATED_AT = 'data_alteracao';

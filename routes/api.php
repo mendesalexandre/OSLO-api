@@ -10,6 +10,7 @@ use App\Http\Controllers\CaixaMovimentoController;
 use App\Http\Controllers\CaixaOperacaoController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\CidadeController;
+use App\Http\Controllers\ConfiguracaoController;
 use App\Http\Controllers\DominioController;
 use App\Http\Controllers\EstadoController;
 use App\Http\Controllers\FeriadoController;
@@ -35,6 +36,14 @@ Route::group(['prefix' => 'feriados'], function () {
     Route::get('/{id}', [FeriadoController::class, 'show']);
     Route::put('/{id}', [FeriadoController::class, 'update']);
     Route::delete('/{id}', [FeriadoController::class, 'destroy']);
+});
+
+Route::group(['prefix' => 'configuracao'], function () {
+    Route::get('/', [ConfiguracaoController::class, 'index']);
+    // Route::post('/criar', [FeriadoController::class, 'create']);
+    // Route::get('/{id}', [FeriadoController::class, 'show']);
+    // Route::put('/{id}', [FeriadoController::class, 'update']);
+    // Route::delete('/{id}', [FeriadoController::class, 'destroy']);
 });
 
 Route::group(['prefix' => 'onr'], function () {
