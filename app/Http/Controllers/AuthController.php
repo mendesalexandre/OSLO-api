@@ -29,40 +29,59 @@ class AuthController extends Controller
     /**
      * Handle user login
      */
-    public function login(Request $request): JsonResponse
+    public function login(Request $request)
     {
-        // Validar dados
+        // Validação
         $request->validate([
-            'email' => 'required|email',
-            'password' => 'required|string'
+            'usuario' => 'required|string',
+            'senha' => 'required|string',
+        ], [
+            'usuario.required' => 'O campo usuário é obrigatório.',
+            'senha.required' => 'O campo senha é obrigatório.',
         ]);
 
+        // Determinar se é email ou usuário
+        $loginField = filter_var($request->usuario, FILTER_VALIDATE_EMAIL) ? 'email' : 'usuario';
+
         // Buscar usuário
-        $user = User::where('email', $request->email)
+        $user = User::where($loginField, $request->usuario)
             ->whereNull('data_exclusao')
             ->first();
 
-        // Validar usuário, senha e se está ativo
-        if (!$user || !$user->is_ativo || !Hash::check($request->password, $user->senha)) {
-            return $this->errorResponse('Credenciais inválidas', [], 401);
+        // Verificar credenciais
+        if (!$user || !Hash::check($request->senha, $user->senha)) {
+            return response()->json([
+                'error' => 'Credenciais inválidas'
+            ], 401);
         }
 
-        // Criar token
-        $tokenResult = $user->createToken('API Token');
-        $token = $tokenResult->token;
+        // Verificar se está ativo
+        if (!$user->is_ativo) {
+            return response()->json([
+                'error' => 'Usuário inativo'
+            ], 403);
+        }
 
-        // Configurar expiração (7 dias se lembrar, 1 dia se não)
-        $hours = $request->remember ? 24 * 7 : 24;
-        $token->expires_at = Carbon::now()->addHours($hours);
-        $token->save();
+        // Revogar todos os tokens anteriores (deslogar de outros dispositivos)
+        $user->tokens()->delete();
 
-        // Retornar sucesso
-        return $this->successResponse([
-            'token' => $tokenResult->accessToken,
+        // Criar novo token
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        // Log de sucesso
+        Log::info('Login successful', [
+            'user_id' => $user->id,
+            'ip' => $request->ip()
+        ]);
+
+        return response()->json([
+            'message' => 'Login realizado com sucesso',
+            'token' => $token,
             'user' => [
                 'id' => $user->id,
                 'nome' => $user->nome,
                 'email' => $user->email,
+                'usuario' => $user->usuario,
             ]
         ]);
     }
