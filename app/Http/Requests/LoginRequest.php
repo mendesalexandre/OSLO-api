@@ -126,7 +126,7 @@ class LoginRequest extends FormRequest
      */
     public function getPassword(): string
     {
-        return $this->validated('password');
+        return $this->validated('senha');
     }
 
     /**
