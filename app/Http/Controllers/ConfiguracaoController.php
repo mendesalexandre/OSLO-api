@@ -13,6 +13,19 @@ class ConfiguracaoController extends Controller
         return response()->json($configuracoes);
     }
 
+    public function show($chave)
+    {
+        $configuracao = Configuracao::query()
+            ->where('chave', '=', $chave)
+            ->first();
+
+        if (!$configuracao) {
+            return response()->json(['error' => 'Configuração não encontrada'], 404);
+        }
+
+        return response()->json($configuracao);
+    }
+
     public function update(Request $request)
     {
         $chave = $request->input('chave');
@@ -26,6 +39,7 @@ class ConfiguracaoController extends Controller
             ]);
 
         $configuracao = Configuracao::query()->where('chave', '=', $chave)->first();
+
         return response()->json($configuracao);
     }
 }

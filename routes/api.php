@@ -40,6 +40,7 @@ Route::group(['prefix' => 'feriados'], function () {
 
 Route::group(['prefix' => 'configuracao'], function () {
     Route::get('/', [ConfiguracaoController::class, 'index'])->name('configuracao.index');
+    Route::get('/{chave}', [ConfiguracaoController::class, 'show'])->name('configuracao.show');
     Route::put('/', [ConfiguracaoController::class, 'update'])->name('configuracao.update');
 });
 
