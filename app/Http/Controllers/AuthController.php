@@ -33,23 +33,23 @@ class AuthController extends Controller
     {
         // Validação
         $request->validate([
-            'usuario' => 'required|string',
-            'senha' => 'required|string',
+            'email' => 'required|string',
+            'password' => 'required|string',
         ], [
-            'usuario.required' => 'O campo usuário é obrigatório.',
-            'senha.required' => 'O campo senha é obrigatório.',
+            'email.required' => 'O campo email é obrigatório.',
+            'password.required' => 'O campo password é obrigatório.',
         ]);
 
         // Determinar se é email ou usuário
-        $loginField = filter_var($request->usuario, FILTER_VALIDATE_EMAIL) ? 'email' : 'usuario';
+        $loginField = filter_var($request->email, FILTER_VALIDATE_EMAIL) ? 'email' : 'usuario';
 
         // Buscar usuário
-        $user = User::where($loginField, $request->usuario)
+        $user = User::where($loginField, $request->email)
             ->whereNull('data_exclusao')
             ->first();
 
         // Verificar credenciais
-        if (!$user || !Hash::check($request->senha, $user->senha)) {
+        if (!$user || !Hash::check($request->password, $user->password)) {
             return response()->json([
                 'error' => 'Credenciais inválidas'
             ], 401);
