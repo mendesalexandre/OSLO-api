@@ -39,13 +39,8 @@ Route::group(['prefix' => 'feriados'], function () {
 });
 
 Route::group(['prefix' => 'configuracao'], function () {
-    Route::get('/', [ConfiguracaoController::class, 'index']);
+    Route::get('/', [ConfiguracaoController::class, 'index'])->name('configuracao.index');
     Route::put('/', [ConfiguracaoController::class, 'update'])->name('configuracao.update');
-
-    // Route::post('/criar', [FeriadoController::class, 'create']);
-    // Route::get('/{id}', [FeriadoController::class, 'show']);
-    // Route::put('/{id}', [FeriadoController::class, 'update']);
-    // Route::delete('/{id}', [FeriadoController::class, 'destroy']);
 });
 
 Route::group(['prefix' => 'onr'], function () {
