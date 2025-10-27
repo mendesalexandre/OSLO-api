@@ -15,6 +15,7 @@ use App\Http\Controllers\Doi\DoiController;
 use App\Http\Controllers\DominioController;
 use App\Http\Controllers\EstadoController;
 use App\Http\Controllers\FeriadoController;
+use App\Http\Controllers\LoteDoiController;
 use App\Http\Controllers\NaturezaController;
 use App\Services\ONR\Certidao\CertidaoService;
 use App\Services\ONR\Autenticacao\Autenticacao;
