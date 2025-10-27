@@ -41,6 +41,10 @@ return [
             'provider' => 'users',
         ],
 
+        'api' => [
+            'driver' => 'sanctum',  // ← isso aqui
+            'provider' => 'users',
+        ],
         // 'api' => [
         //     'driver' => 'passport',
         //     'provider' => 'users',
