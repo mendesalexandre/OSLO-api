@@ -26,28 +26,44 @@ class AuthController extends Controller
     /**
      * Handle user login
      */
-    public function login(LoginRequest $request): JsonResponse
+    /**
+     * Handle user login
+     */
+    public function login(Request $request): JsonResponse
     {
-        // Buscar e validar usuário
-        $user = $this->findUserByEmail($request->getEmail());
+        // Validar dados
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|string'
+        ]);
 
-        if (!$user || !$user->is_ativo || !Hash::check($request->getPassword(), $user->senha)) {
-            return $this->loginFailedResponse($request, 'Credenciais inválidas');
+        // Buscar usuário
+        $user = User::where('email', $request->email)
+            ->whereNull('data_exclusao')
+            ->first();
+
+        // Validar usuário, senha e se está ativo
+        if (!$user || !$user->is_ativo || !Hash::check($request->password, $user->senha)) {
+            return $this->errorResponse('Credenciais inválidas', [], 401);
         }
-        // Criar token com Passport
+
+        // Criar token
         $tokenResult = $user->createToken('API Token');
         $token = $tokenResult->token;
 
-        // Configurar expiração
-        $hours = $request->shouldRemember() ? 24 * 7 : 24;
+        // Configurar expiração (7 dias se lembrar, 1 dia se não)
+        $hours = $request->remember ? 24 * 7 : 24;
         $token->expires_at = Carbon::now()->addHours($hours);
         $token->save();
 
+        // Retornar sucesso
         return $this->successResponse([
-            'access_token' => $tokenResult->accessToken,
-            'token_type' => 'Bearer',
-            'expires_at' => $token->expires_at->toDateTimeString(),
-            'user' => $this->formatUserResponse($user)
+            'token' => $tokenResult->accessToken,
+            'user' => [
+                'id' => $user->id,
+                'nome' => $user->nome,
+                'email' => $user->email,
+            ]
         ]);
     }
 
