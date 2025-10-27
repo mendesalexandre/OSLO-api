@@ -13,14 +13,14 @@ class ConfiguracaoController extends Controller
         return response()->json($configuracoes);
     }
 
-    public function show($chave)
+    public function show(Request $request)
     {
         $configuracao = Configuracao::query()
-            ->where('chave', '=', $chave)
+            ->where('chave', '=', $request->chave)
             ->first();
 
         if (!$configuracao) {
-            return response()->json(['error' => 'Configuração não encontrada'], 404);
+            return response()->json(['erro' => 'Configuração não encontrada'], 404);
         }
 
         return response()->json($configuracao);
