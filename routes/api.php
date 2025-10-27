@@ -26,7 +26,7 @@ use Illuminate\Support\Facades\Storage;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
-})->middleware(['auth:api']);
+})->middleware(['auth:sanctum']);
 
 Route::get('/ping', function () {
     return response()->json(['message' => 'pong']);
@@ -64,7 +64,7 @@ Route::group(['prefix' => 'onr'], function () {
     });
 
 
-    Route::middleware(['auth:api'])->prefix('certificado-digital')->group(function () {
+    Route::middleware(['auth:sanctum'])->prefix('certificado-digital')->group(function () {
 
         // Upload de certificado
         Route::post('/upload', [CertificadoDigitalController::class, 'upload'])
