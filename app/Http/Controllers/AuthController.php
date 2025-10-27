@@ -40,9 +40,6 @@ class AuthController extends Controller
             'password.required' => 'O campo password é obrigatório.',
         ]);
 
-        // Determinar se é email ou usuário
-        $loginField = filter_var($request->email, FILTER_VALIDATE_EMAIL) ? 'email' : 'usuario';
-
         // Buscar usuário
         $user = User::query()->where('email', '=', $request->email)
             ->first();
@@ -56,7 +53,7 @@ class AuthController extends Controller
         ]);
 
         // Verificar credenciais
-        if (!$user || !Hash::check($request->password, $user->password)) {
+        if (!$user || !Hash::check($request->password, $user->senha)) {
             return response()->json([
                 'erro' => 'Credenciais inválidas'
             ], 401);
