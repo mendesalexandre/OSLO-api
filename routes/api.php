@@ -177,7 +177,7 @@ Route::prefix('lote-doi')->group(function () {
 });
 
 // Login
-Route::post('/login', [AuthController::class, 'login'])
+Route::post('/auth/login', [AuthController::class, 'login'])
     ->name('login');
 
 // Rotas protegidas (requerem autenticação)
