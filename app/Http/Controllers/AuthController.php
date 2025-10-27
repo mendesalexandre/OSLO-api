@@ -44,21 +44,28 @@ class AuthController extends Controller
         $loginField = filter_var($request->email, FILTER_VALIDATE_EMAIL) ? 'email' : 'usuario';
 
         // Buscar usuário
-        $user = User::where($loginField, $request->email)
-            ->whereNull('data_exclusao')
+        $user = User::query()->where('email', '=', $request->email)
             ->first();
+
+        Log::info('Tentativa de login', [
+            'email' => $request->email,
+            'ip' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+            'timestamp' => now(),
+            'user_id' => $user
+        ]);
 
         // Verificar credenciais
         if (!$user || !Hash::check($request->password, $user->password)) {
             return response()->json([
-                'error' => 'Credenciais inválidas'
+                'erro' => 'Credenciais inválidas'
             ], 401);
         }
 
         // Verificar se está ativo
         if (!$user->is_ativo) {
             return response()->json([
-                'error' => 'Usuário inativo'
+                'erro' => 'Usuário inativo'
             ], 403);
         }
 
