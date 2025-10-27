@@ -11,6 +11,7 @@ use App\Http\Controllers\CaixaOperacaoController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\CidadeController;
 use App\Http\Controllers\ConfiguracaoController;
+use App\Http\Controllers\Doi\DoiController;
 use App\Http\Controllers\DominioController;
 use App\Http\Controllers\EstadoController;
 use App\Http\Controllers\FeriadoController;
@@ -124,6 +125,53 @@ Route::group(['prefix' => 'onr'], function () {
                 'verificado_em' => now()
             ]);
         })->name('certificado.status');
+    });
+});
+
+// Rotas para DOI
+Route::prefix('declaracao-imobiliaria')->group(function () {
+    Route::get('/', [DoiController::class, 'index']);
+    Route::post('/', [DoiController::class, 'store']);
+    Route::get('/disponiveis', [DoiController::class, 'disponiveis']);
+    Route::post('/validar', [DoiController::class, 'validar']);
+    Route::get('/exportar-excel', [DoiController::class, 'exportarExcel']);
+
+    // Rotas de importação - NOVAS
+    Route::post('/importar/site-receita', [DoiController::class, 'importarSiteReceita']);
+    Route::post('/importar/site-receita-async', [DoiController::class, 'importarSiteReceitaAsync']);
+
+    // Rotas de controle e estatísticas - NOVAS
+    Route::get('/importacao/estatisticas', [DoiController::class, 'estatisticasImportacao']);
+    Route::get('/token/verificar', [DoiController::class, 'verificarToken']);
+
+    Route::prefix('{id}')->group(function () {
+        Route::get('/', [DoiController::class, 'show']);
+        Route::put('/', [DoiController::class, 'update']);
+        Route::delete('/', [DoiController::class, 'destroy']);
+        Route::post('/reprocessar', [DoiController::class, 'reprocessar']);
+        Route::get('/imprimir', [DoiController::class, 'imprimir']);
+    });
+});
+
+// Rotas para Lotes DOI
+Route::prefix('lote-doi')->group(function () {
+    Route::get('/listar', [LoteDoiController::class, 'listar']);
+    Route::post('/preview', [LoteDoiController::class, 'preview']);
+    Route::post('/criar', [LoteDoiController::class, 'criar']);
+    Route::get('/pesquisar', [LoteDoiController::class, 'pesquisar']);
+    Route::get('/{id}/detalhes', [LoteDoiController::class, 'detalhes']);
+    Route::get('/{id}/relatorio-pdf', [LoteDoiController::class, 'relatorioPdf']);
+    Route::post('/relatorio-geral-pdf', [LoteDoiController::class, 'relatorioGeralPdf']);
+    Route::get('/estatisticas', [LoteDoiController::class, 'estatisticas']);
+
+
+    // NOVAS ROTAS PARA EXCLUSÃO
+    Route::get('/{id}/verificar-exclusao', [LoteDoiController::class, 'verificarExclusao']);
+    Route::delete('/{id}/excluir', [LoteDoiController::class, 'excluirLote']);
+
+    Route::prefix('{loteId}')->group(function () {
+        Route::get('/download', [LoteDoiController::class, 'download'])->name('lote-doi.download');
+        Route::patch('/marcar-enviado', [LoteDoiController::class, 'marcarEnviado']);
     });
 });
 
