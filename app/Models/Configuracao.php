@@ -15,4 +15,11 @@ class Configuracao extends Model
     const DELETED_AT = 'data_exclusao';
 
     protected $table = 'configuracao';
+
+    protected $fillable = [
+        'chave',
+        'valor',
+        'tipo',
+        'descricao'
+    ];
 }
