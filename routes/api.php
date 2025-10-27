@@ -187,7 +187,7 @@ Route::post('/logout', [AuthController::class, 'logout'])
     ->name('auth.logout');
 
 // Dados do usuário autenticado
-Route::get('/me', [AuthController::class, 'me'])
+Route::get('/auth/me', [AuthController::class, 'me'])
     ->name('auth.me');
 
 // Renovar token
