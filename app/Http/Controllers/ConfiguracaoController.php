@@ -28,17 +28,18 @@ class ConfiguracaoController extends Controller
 
     public function update(Request $request)
     {
-        $chave = $request->input('chave');
-        $valor = $request->input('valor');
-
+        $validated = $request->validate([
+            'chave' => 'required|string',
+            'valor' => 'required'
+        ]);
 
         $configuracao = Configuracao::query()
-            ->where('chave', '=', $chave)
+            ->where('chave', '=', $validated['chave'])
             ->update([
-                'valor' => $valor
+                'valor' => $validated['valor']
             ]);
 
-        $configuracao = Configuracao::query()->where('chave', '=', $chave)->first();
+        $configuracao = Configuracao::query()->where('chave', '=', $validated['chave'])->first();
 
         return response()->json($configuracao);
     }
