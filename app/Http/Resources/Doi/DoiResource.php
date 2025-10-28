@@ -137,14 +137,20 @@ class DoiResource extends JsonResource
         $json['tipoLogradouro'] = $this->debug['tipoLogradouro'] ?? 'Não informado';
 
         // Nome Logradouro
-        if ($this->debug['nomeLogradouro'] !== null) {
-            $json['nomeLogradouro'] = $this->debug['nomeLogradouro'];
-        }
+        // if ($this->debug['nomeLogradouro'] !== null) {
+        //     $json['nomeLogradouro'] = $this->debug['nomeLogradouro'] ;
+        // }
+
+        $json['nomeLogradouro'] = $this->debug['nomeLogradouro'] ?? 'Não informado';
 
         // Número Imóvel
-        if ($this->debug['numeroImovel'] !== null) {
-            $json['numeroImovel'] = (string) $this->debug['numeroImovel'];
-        }
+        // if ($this->debug['numeroImovel'] !== null) {
+        //     $json['numeroImovel'] = (string) $this->debug['numeroImovel'];
+        // }
+
+        // if ($this->debug['numeroImovel'] !== null) {
+        $json['numeroImovel'] = (string) $this->debug['numeroImovel'] ?? '0';
+        // }
 
         // Complemento Endereço
         if ($this->debug['complementoEndereco'] !== null) {
