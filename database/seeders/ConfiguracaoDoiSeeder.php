@@ -13,7 +13,7 @@ class ConfiguracaoDoiSeeder extends Seeder
         Configuracao::query()->updateOrCreate(
             ['chave' => 'CONFI_DOI_WEB_COOKIE'],
             [
-                'chave' => 'CONFI_DOI_WEB_COOKIE',
+                'chave' => 'CONFIG_DOI_WEB_COOKIE',
                 'valor' => '',
                 'descricao' => 'Cookie utilizado para acessar o site da Receita Federal',
             ]
