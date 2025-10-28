@@ -35,12 +35,6 @@ class DoiResource extends JsonResource
         // Matrícula - remove caracteres não numéricos
         $json['matricula'] = (string) preg_replace('/[^0-9]/', '', $this->debug['matricula']);
 
-        // // Código IBGE - deve ter 7 dígitos numéricos
-        // if (!empty($this->debug['codigoIbge'])) {
-        //     $codigoIbge = preg_replace('/[^0-9]/', '', $this->debug['codigoIbge']);
-        //     $json['codigoIbge'] = str_pad($codigoIbge, 7, '0', STR_PAD_LEFT);
-        // }
-
         // Código IBGE - deve ter 7 dígitos numéricos
         if (!empty($this->debug['codigoIbge'])) {
             $codigoIbge = preg_replace('/[^0-9]/', '', $this->debug['codigoIbge']);
@@ -125,10 +119,22 @@ class DoiResource extends JsonResource
         // Indicador Área Lote Não Consta
         $json['indicadorAreaLoteNaoConsta'] = $this->debug['indicadorAreaLoteNaoConsta'] ?? false;
 
+        // Área Construída e Indicador
+        if ($this->debug['areaConstruida'] !== null) {
+            $json['areaConstruida'] = $this->debug['areaConstruida'];
+            $json['indicadorAreaConstruidaNaoConsta'] = false;
+        } else {
+            // Se não tiver área construída, marca como "não consta"
+            $json['indicadorAreaConstruidaNaoConsta'] = true;
+        }
+
         // Tipo Imóvel
         if ($this->debug['tipoImovel'] !== null) {
             $json['tipoImovel'] = (string) $this->debug['tipoImovel'];
         }
+
+        // Tipo Logradouro - obrigatório para destinação Urbano
+        $json['tipoLogradouro'] = $this->debug['tipoLogradouro'] ?? 'Não informado';
 
         // Nome Logradouro
         if ($this->debug['nomeLogradouro'] !== null) {
@@ -145,10 +151,8 @@ class DoiResource extends JsonResource
             $json['complementoEndereco'] = $this->debug['complementoEndereco'];
         }
 
-        // Bairro
-        if ($this->debug['bairro'] !== null) {
-            $json['bairro'] = $this->debug['bairro'];
-        }
+        // Bairro - obrigatório para destinação Urbano
+        $json['bairro'] = $this->debug['bairro'] ?? 'Não informado';
 
         // CEP
         if ($this->debug['cep'] !== null) {
@@ -159,6 +163,14 @@ class DoiResource extends JsonResource
         if ($this->debug['localizacao'] !== null) {
             $json['localizacao'] = $this->debug['localizacao'];
         }
+
+        // Código Nacional Matrícula (caso não tenha matrícula comum)
+        if ($this->debug['codigoNacionalMatricula'] !== null) {
+            $json['codigoNacionalMatricula'] = $this->debug['codigoNacionalMatricula'];
+        }
+
+        // Denominação - obrigatório para destinação Rural
+        $json['denominacao'] = $this->debug['denominacao'] ?? 'Não informado';
 
         // ============================================
         // ALIENANTES (Transmitentes)
