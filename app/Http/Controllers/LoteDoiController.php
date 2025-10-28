@@ -79,23 +79,13 @@ class LoteDoiController extends Controller
      */
     public function download($loteId)
     {
-        $lote = LoteDoi::with(['declaracoes.alienantes', 'declaracoes.adquirentes', 'declaracoes.transmitentes'])
+        $lote = LoteDoi::with(['declaracoes.transmitentes', 'declaracoes.adquirentes'])
             ->findOrFail($loteId);
-
-        // Verificar se o usuário pode baixar este lote
-        // if ($lote->usuario_id !== Auth::id() && !Auth::user()->can('visualizar_todos_lotes')) {
-        //     abort(403, 'Não autorizado a baixar este lote');
-        // }
 
         // Gerar JSON usando o DoiResource
         $declaracoes = DoiResource::collection($lote->declaracoes);
 
         $jsonData = [
-            // 'lote_id' => $lote->id,
-            // 'data_geracao' => $lote->data_cadastro->toISOString(),
-            // 'periodo' => "{$lote->data_inicio} até {$lote->data_fim}",
-            // 'total_declaracoes' => $lote->declaracoes->count(),
-            // 'usuario' => Auth::user()->name ?? 'Usuário Desconhecido',
             'declaracoes' => $declaracoes
         ];
 
