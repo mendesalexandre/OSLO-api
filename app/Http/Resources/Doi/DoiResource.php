@@ -11,175 +11,180 @@ class DoiResource extends JsonResource
     {
         $json = [];
 
-        if ($this->debug['tipoDeclaracao'] !== null) {
-            $json['tipoDeclaracao'] = $this->debug['tipoDeclaracao'] !== '0' ? '0' : $this->debug['tipoDeclaracao'];
-        }
+        // Tipo Declaração - sempre 0 se não informado
+        $json['tipoDeclaracao'] = $this->debug['tipoDeclaracao'] ?? '0';
 
+        // Tipo Serviço
         $json['tipoServico'] = (string) $this->debug['tipoServico'];
+
+        // Data Lavratura
         $json['dataLavraturaRegistroAverbacao'] = $this->debug['dataLavraturaRegistroAverbacao'];
-        $json['tipoAto'] =  !empty($this->debug['tipoAto']) ? (string) $this->debug['tipoAto'] : (string) '4';
-        $json['tipoLivro'] = !empty($this->debug['tipoLivro']) ?  (string) $this->debug['tipoLivro'] :  (string) '1';
+
+        // Tipo Ato - ATENÇÃO: valor 4 não é permitido, usando 1 como padrão
+        $json['tipoAto'] = !empty($this->debug['tipoAto']) ? (string) $this->debug['tipoAto'] : '1';
+
+        // Tipo Livro - padrão 1
+        $json['tipoLivro'] = !empty($this->debug['tipoLivro']) ? (string) $this->debug['tipoLivro'] : '1';
+
+        // Número Livro
         $json['numeroLivro'] = (string) $this->debug['numeroLivro'];
+
+        // Folha
         $json['folha'] = (string) $this->debug['folha'];
+
+        // Matrícula - remove caracteres não numéricos
         $json['matricula'] = (string) preg_replace('/[^0-9]/', '', $this->debug['matricula']);
 
-        $json['codigoIbge'] = (string) $this->debug['codigoIbge'];
+        // Código IBGE - deve ter 7 dígitos numéricos
+        if (!empty($this->debug['codigoIbge'])) {
+            $codigoIbge = preg_replace('/[^0-9]/', '', $this->debug['codigoIbge']);
+            $json['codigoIbge'] = str_pad($codigoIbge, 7, '0', STR_PAD_LEFT);
+        }
 
-
+        // Número Registro Averbação
         if ($this->debug['numeroRegistroAverbacao'] !== null) {
             $json['numeroRegistroAverbacao'] = (string) $this->debug['numeroRegistroAverbacao'];
         }
 
+        // Natureza Título
         $json['naturezaTitulo'] = (string) $this->debug['naturezaTitulo'];
 
-        if ($this->debug['existeDoiAnterior'] === null) {
-            $json['existeDoiAnterior'] = false;
-        } else {
-            $json['existeDoiAnterior'] = $this->debug['existeDoiAnterior'];
-        }
+        // Existe DOI Anterior
+        $json['existeDoiAnterior'] = $this->debug['existeDoiAnterior'] ?? false;
 
+        // Data Negócio Jurídico
         if ($this->debug['dataNegocioJuridico'] !== null) {
             $json['dataNegocioJuridico'] = $this->debug['dataNegocioJuridico'];
         }
 
-        // SE TIPO OPERACAO FOR IGUAL A 39, TEM QUE INFORMAR A DESCRIÇÃO
-        if ($this->debug['tipoOperacaoImobiliaria'] == 39) {
-            $json['tipoOperacaoImobiliaria'] = (string) $this->debug['tipoOperacaoImobiliaria'];
-            $json['descricaoOutrasOperacoesImobiliarias'] = (string) $this->debug['descricaoOutrasOperacoesImobiliarias'] ?? '';
-        } else {
-            $json['tipoOperacaoImobiliaria'] = (string) $this->debug['tipoOperacaoImobiliaria'];
-        }
-
+        // Tipo Operação Imobiliária
         $json['tipoOperacaoImobiliaria'] = (string) $this->debug['tipoOperacaoImobiliaria'];
 
+        // Se tipo 39, informar descrição
+        if ($this->debug['tipoOperacaoImobiliaria'] == 39) {
+            $json['descricaoOutrasOperacoesImobiliarias'] = (string) ($this->debug['descricaoOutrasOperacoesImobiliarias'] ?? '');
+        }
+
+        // Valor Operação Imobiliária
         if ($this->debug['valorOperacaoImobiliaria'] !== null) {
             $json['valorOperacaoImobiliaria'] = $this->debug['valorOperacaoImobiliaria'];
         }
 
-        if ($this->debug['indicadorNaoConstaValorOperacaoImobiliaria'] !== null) {
-            $json['indicadorNaoConstaValorOperacaoImobiliaria'] = $this->debug['indicadorNaoConstaValorOperacaoImobiliaria'];
-        }
+        // Indicador Não Consta Valor Operação
+        $json['indicadorNaoConstaValorOperacaoImobiliaria'] = $this->debug['indicadorNaoConstaValorOperacaoImobiliaria'] ?? false;
 
+        // Valor Base Cálculo ITBI/ITCMD
         if ($this->debug['valorBaseCalculoItbiItcmd'] !== null) {
             $json['valorBaseCalculoItbiItcmd'] = $this->debug['valorBaseCalculoItbiItcmd'];
         }
 
-        if ($this->debug['indicadorNaoConstaValorBaseCalculoItbiItcmd'] !== null) {
-            $json['indicadorNaoConstaValorBaseCalculoItbiItcmd'] = $this->debug['indicadorNaoConstaValorBaseCalculoItbiItcmd'];
-        }
+        // Indicador Não Consta Valor Base Cálculo
+        $json['indicadorNaoConstaValorBaseCalculoItbiItcmd'] = $this->debug['indicadorNaoConstaValorBaseCalculoItbiItcmd'] ?? false;
 
+        // Forma Pagamento
         $json['formaPagamento'] = $this->debug['formaPagamento'] ? (string) $this->debug['formaPagamento'] : '11';
 
-        if ($this->debug['indicadorPermutaBens'] !== null) {
-            $json['indicadorPermutaBens'] = $this->debug['indicadorPermutaBens'];
-        }
+        // ⚠️ CAMPOS OBRIGATÓRIOS - sempre enviar com false como padrão
+        $json['indicadorPermutaBens'] = $this->debug['indicadorPermutaBens'] ?? false;
+        $json['indicadorPagamentoDinheiro'] = $this->debug['indicadorPagamentoDinheiro'] ?? false;
 
-        if ($this->debug['indicadorPagamentoDinheiro'] !== null) {
-            $json['indicadorPagamentoDinheiro'] = $this->debug['indicadorPagamentoDinheiro'];
-        }
-
-        if (
-            empty($this->debug['valorParteTransacionada']) || is_null($this->debug['valorParteTransacionada'])
-            || $this->debug['valorParteTransacionada'] === 0
-        ) {
+        // Valor Parte Transacionada
+        if (empty($this->debug['valorParteTransacionada']) || is_null($this->debug['valorParteTransacionada']) || $this->debug['valorParteTransacionada'] === 0) {
             $json['valorParteTransacionada'] = 100;
         } else {
             $json['valorParteTransacionada'] = $this->debug['valorParteTransacionada'];
         }
 
-        if (empty($this->debug['tipoParteTransacionada'])) {
-            $json['tipoParteTransacionada'] = "1";
-        } else {
-            $json['tipoParteTransacionada'] = (string) $this->debug['tipoParteTransacionada'];
-        }
+        // Tipo Parte Transacionada
+        $json['tipoParteTransacionada'] = empty($this->debug['tipoParteTransacionada']) ? "1" : (string) $this->debug['tipoParteTransacionada'];
 
+        // CIB
         if ($this->debug['cib'] !== null) {
             $json['cib'] = $this->debug['cib'];
         }
 
+        // Destinação
         $json['destinacao'] = (string) $this->debug['destinacao'];
 
-        if ($this->debug['indicadorImovelPublicoUniao'] !== null) {
-            $json['indicadorImovelPublicoUniao'] = $this->debug['indicadorImovelPublicoUniao'];
-        }
+        // ⚠️ CAMPO OBRIGATÓRIO - sempre enviar com false como padrão
+        $json['indicadorImovelPublicoUniao'] = $this->debug['indicadorImovelPublicoUniao'] ?? false;
 
+        // Área Imóvel
         if ($this->debug['areaImovel'] !== null) {
             $json['areaImovel'] = $this->debug['areaImovel'];
         }
 
-        if ($this->debug['indicadorAreaLoteNaoConsta'] !== null) {
-            $json['indicadorAreaLoteNaoConsta'] = $this->debug['indicadorAreaLoteNaoConsta'];
-        }
+        // Indicador Área Lote Não Consta
+        $json['indicadorAreaLoteNaoConsta'] = $this->debug['indicadorAreaLoteNaoConsta'] ?? false;
 
+        // Tipo Imóvel
         if ($this->debug['tipoImovel'] !== null) {
             $json['tipoImovel'] = (string) $this->debug['tipoImovel'];
         }
 
+        // Nome Logradouro
         if ($this->debug['nomeLogradouro'] !== null) {
             $json['nomeLogradouro'] = $this->debug['nomeLogradouro'];
         }
 
+        // Número Imóvel
         if ($this->debug['numeroImovel'] !== null) {
             $json['numeroImovel'] = (string) $this->debug['numeroImovel'];
         }
 
+        // Complemento Endereço
         if ($this->debug['complementoEndereco'] !== null) {
             $json['complementoEndereco'] = $this->debug['complementoEndereco'];
         }
 
+        // Bairro
         if ($this->debug['bairro'] !== null) {
             $json['bairro'] = $this->debug['bairro'];
         }
 
+        // CEP
         if ($this->debug['cep'] !== null) {
             $json['cep'] = $this->debug['cep'];
         }
 
+        // Localização
         if ($this->debug['localizacao'] !== null) {
             $json['localizacao'] = $this->debug['localizacao'];
         }
 
-        // Transmitentes (renomeados como alienantes para seguir o padrão da versão funcional)
-        // if ($this->relationLoaded('transmitentes') && $this->transmitentes->count() > 0) {
+        // ============================================
+        // ALIENANTES (Transmitentes)
+        // ============================================
         if ($this->relationLoaded('transmitentes') && $this->transmitentes->count() > 0) {
             $alienantes = [];
 
             foreach ($this->transmitentes as $transmitente) {
-                // Agora $transmitente->data é um ARRAY de alienantes
                 $arrayAlienantes = $transmitente->data;
 
-                // Verifica se é array e não está vazio
                 if (is_array($arrayAlienantes)) {
                     foreach ($arrayAlienantes as $dadosTransmitente) {
                         $transmitenteData = [];
 
-                        if (isset($dadosTransmitente['indicadorRepresentante'])) {
-                            $transmitenteData['indicadorRepresentante'] = (bool) $dadosTransmitente['indicadorRepresentante'];
-                        }
+                        // ⚠️ CAMPOS OBRIGATÓRIOS - sempre enviar com false como padrão
+                        $transmitenteData['indicadorRepresentante'] = (bool) ($dadosTransmitente['indicadorRepresentante'] ?? false);
+                        $transmitenteData['indicadorEspolio'] = (bool) ($dadosTransmitente['indicadorEspolio'] ?? false);
+                        $transmitenteData['indicadorEstrangeiro'] = (bool) ($dadosTransmitente['indicadorEstrangeiro'] ?? false);
+                        $transmitenteData['indicadorNaoConstaParticipacaoOperacao'] = (bool) ($dadosTransmitente['indicadorNaoConstaParticipacaoOperacao'] ?? false);
 
-                        if (isset($dadosTransmitente['indicadorEspolio'])) {
-                            $transmitenteData['indicadorEspolio'] = (bool) $dadosTransmitente['indicadorEspolio'];
-                        }
-
-                        if (isset($dadosTransmitente['indicadorEstrangeiro'])) {
-                            $transmitenteData['indicadorEstrangeiro'] = (bool) $dadosTransmitente['indicadorEstrangeiro'];
-                        }
-
-                        if (isset($dadosTransmitente['indicadorNaoConstaParticipacaoOperacao'])) {
-                            $transmitenteData['indicadorNaoConstaParticipacaoOperacao'] = (bool) $dadosTransmitente['indicadorNaoConstaParticipacaoOperacao'];
-                        }
-
+                        // Indicador NI Identificado
                         if (isset($dadosTransmitente['indicadorNiIdentificado']) && $dadosTransmitente['indicadorNiIdentificado'] === false) {
-                            $transmitenteData['indicadorNiIdentificado'] = (bool) $dadosTransmitente['indicadorNiIdentificado'];
-                            $transmitenteData['motivoNaoIdentificacaoNi'] = (string) $dadosTransmitente['motivoNaoIdentificacaoNi'];
+                            $transmitenteData['indicadorNiIdentificado'] = false;
+                            $transmitenteData['motivoNaoIdentificacaoNi'] = (string) ($dadosTransmitente['motivoNaoIdentificacaoNi'] ?? '');
                         } else {
-                            $transmitenteData['indicadorNiIdentificado'] = (bool) $dadosTransmitente['indicadorNiIdentificado'];
+                            $transmitenteData['indicadorNiIdentificado'] = true;
                         }
 
+                        // NI
                         if (isset($dadosTransmitente['ni']) && $dadosTransmitente['ni'] !== null) {
                             $transmitenteData['ni'] = $dadosTransmitente['ni'];
                         }
 
+                        // Participação
                         if (isset($dadosTransmitente['participacao']) && $dadosTransmitente['participacao'] !== null) {
                             $transmitenteData['participacao'] = $dadosTransmitente['participacao'];
                         }
@@ -207,50 +212,39 @@ class DoiResource extends JsonResource
             throw new \Exception('É obrigatório informar ao menos um vendedor/transmitente');
         }
 
-        // Adquirentes
+        // ============================================
+        // ADQUIRENTES
+        // ============================================
         if ($this->relationLoaded('adquirentes') && $this->adquirentes->count() > 0) {
             $adquirentes = [];
 
             foreach ($this->adquirentes as $adquirente) {
-                // Agora $adquirente->data é um ARRAY de adquirentes
                 $arrayAdquirentes = $adquirente->data;
 
-                // Verifica se é array e não está vazio
                 if (is_array($arrayAdquirentes)) {
                     foreach ($arrayAdquirentes as $dadosAdquirente) {
                         $adquirenteData = [];
 
-                        if (isset($dadosAdquirente['indicadorRepresentante'])) {
-                            $adquirenteData['indicadorRepresentante'] = (bool) $dadosAdquirente['indicadorRepresentante'];
-                        }
+                        // ⚠️ CAMPOS OBRIGATÓRIOS - sempre enviar com false como padrão
+                        $adquirenteData['indicadorRepresentante'] = (bool) ($dadosAdquirente['indicadorRepresentante'] ?? false);
+                        $adquirenteData['indicadorEspolio'] = (bool) ($dadosAdquirente['indicadorEspolio'] ?? false);
+                        $adquirenteData['indicadorEstrangeiro'] = (bool) ($dadosAdquirente['indicadorEstrangeiro'] ?? false);
+                        $adquirenteData['indicadorNaoConstaParticipacaoOperacao'] = (bool) ($dadosAdquirente['indicadorNaoConstaParticipacaoOperacao'] ?? false);
 
+                        // Indicador NI Identificado
                         if (isset($dadosAdquirente['indicadorNiIdentificado']) && $dadosAdquirente['indicadorNiIdentificado'] === false) {
-                            $adquirenteData['indicadorNiIdentificado'] = (bool) $dadosAdquirente['indicadorNiIdentificado'];
-                            $adquirenteData['motivoNaoIdentificacaoNi'] = (string) $dadosAdquirente['motivoNaoIdentificacaoNi'];
+                            $adquirenteData['indicadorNiIdentificado'] = false;
+                            $adquirenteData['motivoNaoIdentificacaoNi'] = (string) ($dadosAdquirente['motivoNaoIdentificacaoNi'] ?? '');
                         } else {
-                            $adquirenteData['indicadorNiIdentificado'] = (bool) $dadosAdquirente['indicadorNiIdentificado'];
+                            $adquirenteData['indicadorNiIdentificado'] = true;
                         }
 
-                        if (isset($dadosAdquirente['indicadorEspolio'])) {
-                            $adquirenteData['indicadorEspolio'] = (bool) $dadosAdquirente['indicadorEspolio'];
-                        }
-
-                        if (isset($dadosAdquirente['indicadorEstrangeiro'])) {
-                            $adquirenteData['indicadorEstrangeiro'] = (bool) $dadosAdquirente['indicadorEstrangeiro'];
-                        }
-
-                        if (isset($dadosAdquirente['indicadorNaoConstaParticipacaoOperacao'])) {
-                            $adquirenteData['indicadorNaoConstaParticipacaoOperacao'] = (bool) $dadosAdquirente['indicadorNaoConstaParticipacaoOperacao'];
-                        }
-
-                        // if (isset($dadosAdquirente['indicadorNiIdentificado'])) {
-                        //     $adquirenteData['indicadorNiIdentificado'] = (bool) $dadosAdquirente['indicadorNiIdentificado'];
-                        // }
-
+                        // NI
                         if (isset($dadosAdquirente['ni']) && $dadosAdquirente['ni'] !== null) {
                             $adquirenteData['ni'] = $dadosAdquirente['ni'];
                         }
 
+                        // Participação
                         if (isset($dadosAdquirente['participacao']) && $dadosAdquirente['participacao'] !== null) {
                             $adquirenteData['participacao'] = $dadosAdquirente['participacao'];
                         }
