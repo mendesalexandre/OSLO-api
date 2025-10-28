@@ -35,10 +35,18 @@ class DoiResource extends JsonResource
         // Matrícula - remove caracteres não numéricos
         $json['matricula'] = (string) preg_replace('/[^0-9]/', '', $this->debug['matricula']);
 
+        // // Código IBGE - deve ter 7 dígitos numéricos
+        // if (!empty($this->debug['codigoIbge'])) {
+        //     $codigoIbge = preg_replace('/[^0-9]/', '', $this->debug['codigoIbge']);
+        //     $json['codigoIbge'] = str_pad($codigoIbge, 7, '0', STR_PAD_LEFT);
+        // }
+
         // Código IBGE - deve ter 7 dígitos numéricos
         if (!empty($this->debug['codigoIbge'])) {
             $codigoIbge = preg_replace('/[^0-9]/', '', $this->debug['codigoIbge']);
             $json['codigoIbge'] = str_pad($codigoIbge, 7, '0', STR_PAD_LEFT);
+        } else {
+            $json['codigoIbge'] = '5103254'; // Código padrão
         }
 
         // Número Registro Averbação
