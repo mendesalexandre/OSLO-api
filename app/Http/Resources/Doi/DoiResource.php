@@ -175,9 +175,10 @@ class DoiResource extends JsonResource
         $json['bairro'] = $this->debug['bairro'] ?? 'Não informado';
 
         // CEP
-        if ($this->debug['cep'] !== null) {
-            $json['cep'] = $this->debug['cep'] ?? '78520000';
-        }
+        // if ($this->debug['cep'] !== null) {
+        //     $json['cep'] = $this->debug['cep'] ?? '78520000';
+        // }
+        $json['cep'] = $this->debug['cep'] ?? '78520000';
 
         // Localização
         if ($this->debug['localizacao'] !== null) {
