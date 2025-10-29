@@ -11,7 +11,7 @@ class ConfiguracaoDoiSeeder extends Seeder
     public function run(): void
     {
         Configuracao::query()->updateOrCreate(
-            ['chave' => 'CONFI_DOI_WEB_COOKIE'],
+            ['chave' => 'CONFIG_DOI_WEB_COOKIE'],
             [
                 'chave' => 'CONFIG_DOI_WEB_COOKIE',
                 'valor' => '',
