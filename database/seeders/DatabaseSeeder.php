@@ -21,7 +21,7 @@ class DatabaseSeeder extends Seeder
             CidadeSeeder::class,
             NaturezaSeeder::class,
             TipoPagamentoSeeder::class,
-            UsuarioSeeder::class,
+            // UsuarioSeeder::class,
             ConfiguracaoDoiSeeder::class,
             // MeioPagamentoSeeder::class,
             // TransacaoSeeder::class,
