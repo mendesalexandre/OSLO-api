@@ -349,20 +349,50 @@ class DoiImportacaoService
         }
     }
 
+    // private function gerarListaMeses(int $anos): array
+    // {
+    //     $meses = [];
+    //     $dataAtual = now();
+
+    //     for ($i = 0; $i < ($anos * 12); $i++) {
+    //         $mesReferencia = $dataAtual->copy()->subMonths($i);
+
+    //         $inicioMes = $mesReferencia->startOfMonth()->format('Y-m-d');
+    //         $fimMes = $mesReferencia->endOfMonth()->format('Y-m-d');
+
+    //         // Se o mês atual, usar até hoje
+    //         if ($i === 0) {
+    //             $fimMes = $dataAtual->format('Y-m-d');
+    //         }
+
+    //         $meses[] = [
+    //             'inicio' => $inicioMes,
+    //             'fim' => $fimMes,
+    //             'nome' => $mesReferencia->locale('pt_BR')->isoFormat('MMMM/YYYY'),
+    //             'mes_ano' => $mesReferencia->format('Y-m')
+    //         ];
+    //     }
+
+    //     return array_reverse($meses);
+    // }
+
     private function gerarListaMeses(int $anos): array
     {
         $meses = [];
         $dataAtual = now();
 
         for ($i = 0; $i < ($anos * 12); $i++) {
+            // Criar uma cópia limpa para cada iteração
             $mesReferencia = $dataAtual->copy()->subMonths($i);
 
-            $inicioMes = $mesReferencia->startOfMonth()->format('Y-m-d');
-            $fimMes = $mesReferencia->endOfMonth()->format('Y-m-d');
+            // Usar clone() ou copy() para evitar mutação
+            $inicioMes = $mesReferencia->copy()->startOfMonth()->format('Y-m-d');
 
-            // Se o mês atual, usar até hoje
+            // Se é o mês atual, usar data de hoje como fim
             if ($i === 0) {
                 $fimMes = $dataAtual->format('Y-m-d');
+            } else {
+                $fimMes = $mesReferencia->copy()->endOfMonth()->format('Y-m-d');
             }
 
             $meses[] = [
