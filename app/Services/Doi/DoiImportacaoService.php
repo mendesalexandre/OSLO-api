@@ -379,27 +379,38 @@ class DoiImportacaoService
     private function gerarListaMeses(int $anos): array
     {
         $meses = [];
-        $dataAtual = now();
+        $hoje = now();
+
+        // Começar do mês/ano atual
+        $anoAtual = (int) $hoje->format('Y');
+        $mesAtual = (int) $hoje->format('m');
 
         for ($i = 0; $i < ($anos * 12); $i++) {
-            // Criar uma cópia limpa para cada iteração
-            $mesReferencia = $dataAtual->copy()->subMonths($i);
+            // Calcular ano e mês subtraindo meses
+            $totalMeses = ($anoAtual * 12 + $mesAtual) - $i;
+            $ano = intdiv($totalMeses - 1, 12);
+            $mes = (($totalMeses - 1) % 12) + 1;
 
-            // Usar clone() ou copy() para evitar mutação
-            $inicioMes = $mesReferencia->copy()->startOfMonth()->format('Y-m-d');
+            // Criar data do primeiro dia do mês
+            $primeiroDia = Carbon::create($ano, $mes, 1, 0, 0, 0);
+            $ultimoDia = $primeiroDia->copy()->endOfMonth();
 
-            // Se é o mês atual, usar data de hoje como fim
+            $inicioMes = $primeiroDia->format('Y-m-d');
+
+            // Se for o mês atual, usar hoje como fim
             if ($i === 0) {
-                $fimMes = $dataAtual->format('Y-m-d');
+                $fimMes = $hoje->format('Y-m-d');
+                $dataReferencia = $hoje->copy();
             } else {
-                $fimMes = $mesReferencia->copy()->endOfMonth()->format('Y-m-d');
+                $fimMes = $ultimoDia->format('Y-m-d');
+                $dataReferencia = $primeiroDia->copy();
             }
 
             $meses[] = [
                 'inicio' => $inicioMes,
                 'fim' => $fimMes,
-                'nome' => $mesReferencia->locale('pt_BR')->isoFormat('MMMM/YYYY'),
-                'mes_ano' => $mesReferencia->format('Y-m')
+                'nome' => $dataReferencia->locale('pt_BR')->isoFormat('MMMM/YYYY'),
+                'mes_ano' => sprintf('%04d-%02d', $ano, $mes)
             ];
         }
 
