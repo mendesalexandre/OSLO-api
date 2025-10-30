@@ -74,7 +74,9 @@ class DoiResource extends JsonResource
         }
 
         // Tipo Operação Imobiliária
-        $json['tipoOperacaoImobiliaria'] = (string) $this->debug['tipoOperacaoImobiliaria'];
+        // $json['tipoOperacaoImobiliaria'] = (string) $this->debug['tipoOperacaoImobiliaria'];
+        // SE A OPERAÇÃO FOR 53 ENTÃO FORÇAR O 67
+        $json['tipoOperacaoImobiliaria'] = ($this->debug['tipoOperacaoImobiliaria'] == 53) ? '67' : (string) $this->debug['tipoOperacaoImobiliaria'];
 
         // Se tipo 39, informar descrição
         if ($this->debug['tipoOperacaoImobiliaria'] == 39) {
