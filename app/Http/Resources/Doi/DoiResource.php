@@ -13,7 +13,13 @@ class DoiResource extends JsonResource
         $json = [];
 
         // Tipo Declaração - sempre 0 se não informado
-        $json['tipoDeclaracao'] = (string) $this->debug['tipoDeclaracao'] ?? '0';
+        // CASO TIPO DECLARAÇÃO FOR 1 ENTÃO MANDAR COMO ZERO
+        if ($this->debug['tipoDeclaracao'] == 1) {
+            $json['tipoDeclaracao'] = '0';
+        } else {
+            $json['tipoDeclaracao'] = (string) $this->debug['tipoDeclaracao'] ?? '0';
+        }
+        // $json['tipoDeclaracao'] = (string) $this->debug['tipoDeclaracao'] ?? '0';
 
         // Tipo Serviço
         $json['tipoServico'] = (string) $this->debug['tipoServico'];
