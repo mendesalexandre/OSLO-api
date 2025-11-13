@@ -20,6 +20,7 @@ use App\Http\Controllers\NaturezaController;
 use App\Services\ONR\Certidao\CertidaoService;
 use App\Services\ONR\Autenticacao\Autenticacao;
 use App\Http\Controllers\ONR\CertificadoDigitalController;
+use App\Http\Controllers\TabelaCustaController;
 use App\Http\Controllers\TransacaoController;
 use App\Http\Controllers\VersaoController;
 use Illuminate\Support\Facades\Storage;
@@ -267,6 +268,11 @@ Route::apiResource('caixa', CaixaController::class);
 // CATEGORIA
 // ========================================
 Route::apiResource('categoria', CategoriaController::class);
+
+// ========================================
+// TABELA DE CUSTA
+// ========================================
+Route::apiResource('tabela-custa', TabelaCustaController::class);
 
 // ========================================
 // TRANSAÇÃO

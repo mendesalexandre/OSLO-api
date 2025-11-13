@@ -14,6 +14,7 @@ class TabelaCustaModeloSeeder extends Seeder
             'nome' => 'Tabela de Custa do Estado de Mato Grosso',
             'vigencia_inicio' => now()->subYear(),
             'vigencia_fim' => now()->endOfYear(),
+            'ano' => now()->year,
             'observacao' => 'Tabela padrão de custa para o estado de Mato Grosso.',
         ]);
     }
