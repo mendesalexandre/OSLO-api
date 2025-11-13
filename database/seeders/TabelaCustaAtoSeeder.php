@@ -2,14 +2,14 @@
 
 namespace Database\Seeders;
 
-use App\Models\ONR\TabelaCusta;
+use App\Models\TabelaCustaAto;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class TabelaCustaONR2025Seeder extends Seeder
+class TabelaCustaAtoSeeder extends Seeder
 {
     public function run(): void
     {
-        // TabelaCusta::query()->create([]);
+        TabelaCustaAto::query()->create();
     }
 }
