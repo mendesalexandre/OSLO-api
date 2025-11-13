@@ -93,7 +93,6 @@ Route::group(['prefix' => 'onr'], function () {
 
     // Rotas públicas (se necessário)
     Route::prefix('certificado-digital')->group(function () {
-
         // Status público (sem dados sensíveis)
         Route::get('/status', function () {
             $certificadoAtivo = CertificadoDigital::ativo();
@@ -263,6 +262,7 @@ Route::prefix('cidade')->group(function () {
 
 Route::apiResource('etapa', EtapaController::class);
 Route::apiResource('caixa', CaixaController::class);
+
 // ========================================
 // CATEGORIA
 // ========================================
@@ -308,7 +308,6 @@ Route::prefix('caixa-movimento')->group(function () {
 
 // Movimento atual de um caixa específico
 Route::get('caixa/{id}/movimento-atual', [CaixaMovimentoController::class, 'movimentoAtual']);
-
 
 Route::prefix('caixa-operacao')->group(function () {
     // Listar
