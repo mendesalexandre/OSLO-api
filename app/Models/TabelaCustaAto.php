@@ -4,6 +4,7 @@
 namespace App\Models;
 
 use App\Enums\TipoCalculoAto;
+use App\Enums\TipoCalculoAtoEnum;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -55,7 +56,7 @@ class TabelaCustaAto extends Model
 
     protected $casts = [
         'is_ativo' => 'boolean',
-        'tipo_calculo' => TipoCalculoAto::class,
+        'tipo_calculo' => TipoCalculoAtoEnum::class,
         'configuracao_calculo' => 'array',
         'permitir_base_calculo' => 'boolean',
         'permitir_desconto' => 'boolean',
