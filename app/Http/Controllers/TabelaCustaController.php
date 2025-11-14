@@ -13,4 +13,9 @@ class TabelaCustaController extends Controller
 
         return response()->json($tabelaCustas);
     }
+
+    public function show(TabelaCusta $tabelaCusta)
+    {
+        return response()->json($tabelaCusta);
+    }
 }

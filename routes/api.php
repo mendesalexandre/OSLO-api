@@ -272,7 +272,20 @@ Route::apiResource('categoria', CategoriaController::class);
 // ========================================
 // TABELA DE CUSTA
 // ========================================
-Route::apiResource('tabela-custa', TabelaCustaController::class);
+
+Route::prefix('tabela-custa')
+    ->as('tabela-custa.')
+    ->group(function () {
+        Route::get('/', [TabelaCustaController::class, 'index'])->name('index');
+        Route::get('/{tabelaCusta}', [TabelaCustaController::class, 'show'])->name('show');
+    });
+
+Route::prefix('tabela-custa-ato')
+    ->as('tabela-custa-ato.')
+    ->group(function () {
+        Route::get('/', [TabelaCustaController::class, 'index'])->name('index');
+        Route::get('/{tabelaCusta}', [TabelaCustaController::class, 'show'])->name('show');
+    });
 
 // ========================================
 // TRANSAÇÃO
