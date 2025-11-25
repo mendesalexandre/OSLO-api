@@ -49,10 +49,7 @@ return new class extends Migration
             $table->foreignId('ato_pai_id')->nullable()->constrained('tabela_custa_ato')->nullOnDelete();
             $table->boolean('exige_ato_pai')->default(false);
 
-
-            // Desconto (IMPORTANTE!)
             $table->decimal('percentual_cobrado', 5, 2)->default(100.00); // 50% = cobrar metade
-
 
             // Auditoria
             $table->foreignId('criador_id')->nullable()->constrained('usuario');

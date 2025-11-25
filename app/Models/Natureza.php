@@ -11,14 +11,13 @@ class Natureza extends Model
 {
     use HasFactory, AuditableTrait;
 
-    protected $table = 'natureza'; // Mantém a tabela atual
+    protected $table = 'natureza';
 
-    // Desabilita os timestamps padrão do Laravel
-    public $timestamps = false;
 
     // Define os timestamps customizados
     const CREATED_AT = 'data_cadastro';
     const UPDATED_AT = 'data_alteracao';
+    const DELETED_AT = 'data_exclusao';
 
     protected $fillable = [
         'uuid',
