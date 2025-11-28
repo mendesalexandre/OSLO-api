@@ -49,6 +49,15 @@ class Transacao extends Model
         'data_exclusao' => 'datetime',
     ];
 
+    public static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            $model->usuario_id = auth()->id() ?? 1;
+        });
+    }
+
     // Relacionamentos
 
     public function categoria(): BelongsTo

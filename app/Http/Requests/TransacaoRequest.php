@@ -32,7 +32,7 @@ class TransacaoRequest extends FormRequest
             'valor' => 'required|numeric|min:0',
             'valor_pago' => 'nullable|numeric|min:0',
             'status' => ['nullable', new Enum(TransacaoStatusEnum::class)],
-            'data_vencimento' => 'required|date',
+            'data_vencimento' => 'nullable|date',
             'data_pagamento' => 'nullable|date',
             'observacao' => 'nullable|string',
             'documento' => 'nullable|string|max:100',
