@@ -8,8 +8,8 @@ enum TransacaoNaturezaEnum: string
     case CONTA_RECEBER = 'CONTA_RECEBER';
     case TRANSFERENCIA = 'TRANSFERENCIA';
     case AJUSTE = 'AJUSTE';
-    case SANGRIA = 'SANGRIA';      // ⭐ NOVO
-    case REFORCO = 'REFORCO';      // ⭐ NOVO
+    case SANGRIA = 'SANGRIA';
+    case REFORCO = 'REFORCO';
 
     public static function values(): array
     {

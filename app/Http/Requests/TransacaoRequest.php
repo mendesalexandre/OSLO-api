@@ -21,6 +21,7 @@ class TransacaoRequest extends FormRequest
     public function rules(): array
     {
         $rules = [
+            'is_ativo' => 'boolean',
             'caixa_id' => 'required|exists:caixa,id',
             'tipo' => ['required', new Enum(TransacaoTipoEnum::class)],
             'natureza' => ['required', new Enum(TransacaoNaturezaEnum::class)],
@@ -36,15 +37,14 @@ class TransacaoRequest extends FormRequest
             'observacao' => 'nullable|string',
             'documento' => 'nullable|string|max:100',
             'pessoa_id' => 'nullable|exists:pessoa,id',
-            'usuario_id' => 'required|exists:usuario,id',
-            'is_ativo' => 'boolean',
+            // 'usuario_id' => 'required|exists:usuario,id',
         ];
 
         // No update, os campos podem ser opcionais
         if ($this->isMethod('PUT') || $this->isMethod('PATCH')) {
             $rules['caixa_id'] = 'sometimes|required|exists:caixa,id';
-            $rules['tipo'] = ['sometimes', 'required', new Enum(TransacaoTipo::class)];
-            $rules['natureza'] = ['sometimes', 'required', new Enum(TransacaoNatureza::class)];
+            $rules['tipo'] = ['sometimes', 'required', new Enum(TransacaoTipoEnum::class)];
+            $rules['natureza'] = ['sometimes', 'required', new Enum(TransacaoNaturezaEnum::class)];
             $rules['descricao'] = 'sometimes|required|string|max:255';
             $rules['valor'] = 'sometimes|required|numeric|min:0';
             $rules['data_vencimento'] = 'sometimes|required|date';
