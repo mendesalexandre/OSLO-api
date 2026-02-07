@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\EtapaController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Models\ONR\CertificadoDigital;
+use App\Http\Controllers\AuditoriaController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CaixaController;
 use App\Http\Controllers\CaixaMovimentoController;
@@ -335,5 +336,17 @@ Route::middleware(['auth:api'])->group(function () {
         Route::get('tipo/reforcos', [CaixaOperacaoController::class, 'reforcos']);
         Route::get('tipo/transferencias', [CaixaOperacaoController::class, 'transferencias']);
         Route::get('caixa/{id}', [CaixaOperacaoController::class, 'porCaixa']);
+    });
+
+    // ========================================
+    // AUDITORIA
+    // ========================================
+    Route::prefix('auditoria')->group(function () {
+        Route::get('/', [AuditoriaController::class, 'listar']);
+        Route::get('/tabelas', [AuditoriaController::class, 'tabelasAuditadas']);
+        Route::get('/estatisticas', [AuditoriaController::class, 'estatisticas']);
+        Route::get('/tabela/{tabela}', [AuditoriaController::class, 'porTabela']);
+        Route::get('/tabela/{tabela}/registro/{registroId}', [AuditoriaController::class, 'porRegistro']);
+        Route::get('/usuario/{usuarioId}', [AuditoriaController::class, 'porUsuario']);
     });
 });

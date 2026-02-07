@@ -13,9 +13,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        // $middleware->alias([
-        //     'whitelist.ip' => \App\Http\Middleware\WhitelistIpMiddleware::class,
-        // ]);
+        $middleware->appendToGroup('api', [
+            \App\Http\Middleware\AuditoriaContexto::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
