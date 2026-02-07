@@ -42,19 +42,9 @@ return [
         ],
 
         'api' => [
-            'driver' => 'sanctum',
+            'driver' => 'jwt',
             'provider' => 'users',
         ],
-
-        // 'api' => [
-        //     'driver' => 'passport',
-        //     'provider' => 'users',
-        // ],
-
-        // 'api' => [
-        //     'driver' => 'jwt',
-        //     'provider' => 'users',
-        // ],
     ],
 
     /*

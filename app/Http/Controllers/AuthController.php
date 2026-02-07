@@ -2,13 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Carbon\Carbon;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\JsonResponse;
 use Tymon\JWTAuth\Facades\JWTAuth;
-use App\Http\Requests\LoginRequest;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Exceptions\JWTException;
@@ -20,18 +18,14 @@ class AuthController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login', 'register']]);
+        $this->middleware('auth:api', ['except' => ['login']]);
     }
 
     /**
-     * Handle user login
+     * Handle user login.
      */
-    /**
-     * Handle user login
-     */
-    public function login(Request $request)
+    public function login(Request $request): JsonResponse
     {
-        // Validação
         $request->validate([
             'email' => 'required|string',
             'password' => 'required|string',
@@ -40,90 +34,90 @@ class AuthController extends Controller
             'password.required' => 'O campo password é obrigatório.',
         ]);
 
-        // Buscar usuário
-        $user = User::query()->where('email', '=', $request->email)
+        // Buscar usuário (não excluído)
+        $user = User::query()
+            ->where('email', $request->email)
+            ->whereNull('data_exclusao')
             ->first();
 
-        Log::info('Tentativa de login', [
-            'email' => $request->email,
-            'ip' => $request->ip(),
-            'user_agent' => $request->userAgent(),
-            'timestamp' => now(),
-            'user_id' => $user
-        ]);
+        if (!$user) {
+            Log::warning('Tentativa de login - usuário não encontrado', [
+                'email' => $request->email,
+                'ip' => $request->ip(),
+            ]);
 
-        // Verificar credenciais
-        if (!$user || !Hash::check($request->password, $user->senha)) {
-            return response()->json([
-                'erro' => 'Credenciais inválidas'
-            ], 401);
+            return $this->errorResponse('Credenciais inválidas', [], 401);
         }
 
-        // Verificar se está ativo
         if (!$user->is_ativo) {
-            return response()->json([
-                'erro' => 'Usuário inativo'
-            ], 403);
+            return $this->errorResponse('Usuário inativo', [], 403);
         }
 
-        // Revogar todos os tokens anteriores (deslogar de outros dispositivos)
-        $user->tokens()->delete();
+        // Autenticação JWT via guard 'api'
+        // 'password' é a chave que o guard usa para obter o valor plain-text,
+        // getAuthPassword() no model retorna $this->senha (coluna do banco)
+        $credentials = [
+            'email' => $request->email,
+            'password' => $request->password,
+        ];
 
-        // Criar novo token
-        $token = $user->createToken('auth_token')->plainTextToken;
+        if (!$token = auth('api')->attempt($credentials)) {
+            Log::warning('Tentativa de login - credenciais inválidas', [
+                'email' => $request->email,
+                'ip' => $request->ip(),
+            ]);
 
-        // Log de sucesso
-        Log::info('Login successful', [
+            return $this->errorResponse('Credenciais inválidas', [], 401);
+        }
+
+        // Atualizar informações de último login
+        $user->update([
+            'ultimo_login_em' => now(),
+            'ultimo_login_ip' => $request->ip(),
+        ]);
+
+        Log::info('Login realizado com sucesso', [
             'user_id' => $user->id,
-            'ip' => $request->ip()
+            'ip' => $request->ip(),
         ]);
 
-        return response()->json([
-            'message' => 'Login realizado com sucesso',
-            'access_token' => $token,
-            'user' => [
-                'id' => $user->id,
-                'nome' => $user->nome,
-                'email' => $user->email,
-                'usuario' => $user->usuario,
-            ]
-        ]);
+        return $this->respondWithToken($token, $user);
     }
 
     /**
-     * Get the authenticated User.
+     * Get the authenticated user with permissions and roles.
      */
     public function me(): JsonResponse
     {
-        $user = auth()->user();
+        $user = auth('api')->user();
 
         return $this->successResponse([
             'user' => $this->formatUserResponse($user),
             'permissions' => $user->getAllPermissions()->pluck('name'),
-            'roles' => $user->getRoleNames()
+            'roles' => $user->getRoleNames(),
         ]);
     }
 
     /**
-     * Log the user out (Invalidate the token).
+     * Log the user out (invalidate the token).
      */
     public function logout(): JsonResponse
     {
         try {
-            JWTAuth::invalidate(JWTAuth::getToken());
+            $userId = auth('api')->id();
+            auth('api')->logout();
 
             Log::info('Logout realizado', [
-                'user_id' => auth()->id(),
-                'ip' => request()->ip()
+                'user_id' => $userId,
+                'ip' => request()->ip(),
             ]);
 
             return $this->successResponse(null, [
-                'message' => 'Logout realizado com sucesso.'
+                'message' => 'Logout realizado com sucesso.',
             ]);
         } catch (JWTException $e) {
             Log::error('Erro no logout', [
-                'user_id' => auth()->id(),
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
 
             return $this->errorResponse('Erro ao fazer logout.', [], 500);
@@ -131,68 +125,96 @@ class AuthController extends Controller
     }
 
     /**
-     * Refresh a token.
+     * Refresh the JWT token.
      */
     public function refresh(): JsonResponse
     {
         try {
-            $token = JWTAuth::refresh(JWTAuth::getToken());
+            $token = auth('api')->refresh();
+            $user = auth('api')->setToken($token)->user();
 
             Log::info('Token renovado', [
-                'user_id' => auth()->id(),
-                'ip' => request()->ip()
+                'user_id' => $user?->id,
+                'ip' => request()->ip(),
             ]);
 
-            return $this->successResponse([
-                'access_token' => $token,
-                'token_type' => 'Bearer',
-                'expires_in' => config('jwt.ttl') * 60,
-            ], [
-                'message' => 'Token renovado com sucesso.'
-            ]);
+            return $this->respondWithToken($token, $user);
         } catch (JWTException $e) {
             Log::error('Erro ao renovar token', [
-                'user_id' => auth()->id(),
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
 
-            return $this->errorResponse('Erro ao renovar token.', [], 500);
+            return $this->errorResponse('Erro ao renovar token.', [], 401);
         }
     }
 
     /**
-     * Invalidate all user tokens (logout from all devices).
+     * Invalidate the current token.
+     * JWT is stateless — token is added to the blacklist.
      */
-    public function logoutAllDevices(): JsonResponse
+    public function revokeAllTokens(): JsonResponse
     {
         try {
-            // Invalidar token atual
-            JWTAuth::invalidate(JWTAuth::getToken());
+            $userId = auth('api')->id();
+            auth('api')->logout();
 
-            // Para JWT, não há como invalidar todos os tokens de uma vez
-            // Uma alternação seria usar uma blacklist ou mudar o JWT secret do usuário
-            // Por enquanto, apenas invalidamos o token atual
-
-            Log::info('Logout de todos os dispositivos', [
-                'user_id' => auth()->id(),
-                'ip' => request()->ip()
+            Log::info('Revogação de tokens solicitada', [
+                'user_id' => $userId,
+                'ip' => request()->ip(),
             ]);
 
             return $this->successResponse(null, [
-                'message' => 'Logout realizado de todos os dispositivos.'
+                'message' => 'Token revogado com sucesso. Faça login novamente em todos os dispositivos.',
             ]);
         } catch (JWTException $e) {
-            Log::error('Erro no logout de todos os dispositivos', [
-                'user_id' => auth()->id(),
-                'error' => $e->getMessage()
+            Log::error('Erro ao revogar tokens', [
+                'error' => $e->getMessage(),
             ]);
 
-            return $this->errorResponse('Erro ao fazer logout.', [], 500);
+            return $this->errorResponse('Erro ao revogar tokens.', [], 500);
         }
     }
 
     /**
-     * Check if token is valid.
+     * Change the authenticated user's password.
+     */
+    public function changePassword(Request $request): JsonResponse
+    {
+        $request->validate([
+            'senha_atual' => 'required|string',
+            'nova_senha' => 'required|string|min:6|confirmed',
+        ], [
+            'senha_atual.required' => 'A senha atual é obrigatória.',
+            'nova_senha.required' => 'A nova senha é obrigatória.',
+            'nova_senha.min' => 'A nova senha deve ter pelo menos 6 caracteres.',
+            'nova_senha.confirmed' => 'A confirmação da nova senha não corresponde.',
+        ]);
+
+        $user = auth('api')->user();
+
+        if (!Hash::check($request->senha_atual, $user->senha)) {
+            return $this->errorResponse('Senha atual incorreta.', [], 422);
+        }
+
+        $user->update([
+            'senha' => $request->nova_senha, // 'hashed' cast handles hashing
+        ]);
+
+        // Invalidar token para forçar re-login com nova senha
+        auth('api')->logout();
+
+        Log::info('Senha alterada com sucesso', [
+            'user_id' => $user->id,
+            'ip' => $request->ip(),
+        ]);
+
+        return $this->successResponse(null, [
+            'message' => 'Senha alterada com sucesso. Faça login novamente.',
+        ]);
+    }
+
+    /**
+     * Check if the current token is valid.
      */
     public function checkToken(): JsonResponse
     {
@@ -202,59 +224,17 @@ class AuthController extends Controller
             return $this->successResponse([
                 'valid' => true,
                 'user' => $this->formatUserResponse($user),
-                'expires_in' => JWTAuth::getPayload()->get('exp') - time()
+                'expires_in' => JWTAuth::getPayload()->get('exp') - time(),
             ]);
         } catch (JWTException $e) {
             return $this->errorResponse('Token inválido.', [
-                'valid' => false
+                'valid' => false,
             ], 401);
         }
     }
 
     /**
-     * Find user by email
-     */
-    private function findUserByEmail(string $email): ?User
-    {
-        return User::query()
-            ->where('email', $email)
-            ->whereNull('data_exclusao')
-            ->first();
-    }
-
-    /**
-     * Handle failed login response
-     */
-    private function loginFailedResponse(LoginRequest $request, string $reason): JsonResponse
-    {
-        Log::warning('Tentativa de login falhada', [
-            'email' => $request->getEmail(),
-            'reason' => $reason,
-            'ip' => $request->ip(),
-            'user_agent' => $request->userAgent(),
-            'timestamp' => now()
-        ]);
-
-        return $this->errorResponse(
-            'Os dados informados são inválidos, por favor tente novamente.',
-            [],
-            401
-        );
-    }
-
-    /**
-     * Update user's last login information
-     */
-    private function updateLastLogin(User $user, LoginRequest $request): void
-    {
-        $user->update([
-            'ultimo_login' => now(),
-            'ultimo_login_ip' => $request->ip(),
-        ]);
-    }
-
-    /**
-     * Format user data for response
+     * Format user data for response.
      */
     private function formatUserResponse(User $user): array
     {
@@ -266,15 +246,31 @@ class AuthController extends Controller
             'foto' => $user->foto ? asset('storage/' . $user->foto) : null,
             'email_verificado' => !is_null($user->email_verificado_em),
             'data_cadastro' => $user->data_cadastro?->format('Y-m-d H:i:s'),
-            'is_ativo' => $user->is_ativo
+            'is_ativo' => $user->is_ativo,
         ];
     }
 
     /**
-     * Check if email verification is required
+     * Build the token response structure.
      */
-    private function shouldVerifyEmail(): bool
+    private function respondWithToken(string $token, ?User $user = null): JsonResponse
     {
-        return config('auth.require_email_verification', false);
+        $data = [
+            'access_token' => $token,
+            'token_type' => 'Bearer',
+            'expires_in' => config('jwt.ttl') * 60,
+        ];
+
+        if ($user) {
+            $data['user'] = [
+                'id' => $user->id,
+                'nome' => $user->nome,
+                'email' => $user->email,
+            ];
+        }
+
+        return $this->successResponse($data, [
+            'message' => 'Autenticação realizada com sucesso.',
+        ]);
     }
 }
