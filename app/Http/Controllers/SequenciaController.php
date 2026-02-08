@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Sequencia;
 use App\Services\SequenciaService;
 use App\Traits\ApiResponseTrait;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
@@ -13,7 +12,7 @@ use Illuminate\Validation\Rule;
 
 class SequenciaController extends Controller
 {
-    use ApiResponseTrait, AuthorizesRequests;
+    use ApiResponseTrait;
 
     protected SequenciaService $sequenciaService;
 
@@ -27,13 +26,10 @@ class SequenciaController extends Controller
      */
     public function index(): JsonResponse
     {
-        $this->authorize('PERMITIR_SEQUENCIA_VISUALIZAR');
 
         $sequencias = $this->sequenciaService->listarSequencias();
 
-        return $this->successResponse($sequencias, [
-            'user_permissions' => $this->getUserModulePermissions()
-        ]);
+        return $this->successResponse($sequencias);
     }
 
     /**
@@ -41,7 +37,6 @@ class SequenciaController extends Controller
      */
     public function show(string $dominoCodigo, int|null $ano = null): JsonResponse
     {
-        $this->authorize('PERMITIR_SEQUENCIA_VISUALIZAR');
 
         $situacao = $this->sequenciaService->situacaoSequencia($dominoCodigo, $ano);
 
@@ -53,7 +48,6 @@ class SequenciaController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
-        $this->authorize('PERMITIR_SEQUENCIA_CRIAR');
 
         $validated = $this->validateSequencia($request);
 
@@ -75,7 +69,6 @@ class SequenciaController extends Controller
      */
     public function update(Request $request, string $dominoCodigo, int|null $ano = null): JsonResponse
     {
-        $this->authorize('PERMITIR_SEQUENCIA_EDITAR');
 
         $ano = $ano ?? now()->year;
         $validated = $this->validateSequencia($request, true);
@@ -102,7 +95,6 @@ class SequenciaController extends Controller
      */
     public function proximoNumero(string $dominoCodigo, int|null $ano = null): JsonResponse
     {
-        $this->authorize('PERMITIR_SEQUENCIA_GERAR');
 
         $numero = $this->sequenciaService->proximoNumero($dominoCodigo, $ano);
 
@@ -120,7 +112,6 @@ class SequenciaController extends Controller
      */
     public function reset(Request $request, string $dominoCodigo, int|null $ano = null): JsonResponse
     {
-        $this->authorize('PERMITIR_SEQUENCIA_RESETAR');
 
         $ano = $ano ?? now()->year;
         $novoNumero = $request->get('numero_atual', 0);
@@ -173,7 +164,6 @@ class SequenciaController extends Controller
      */
     public function verificarRenovacoes(): JsonResponse
     {
-        $this->authorize('PERMITIR_SEQUENCIA_VISUALIZAR');
 
         $sequenciasParaRenovar = $this->sequenciaService->verificarSequenciasParaRenovar();
 
@@ -187,7 +177,6 @@ class SequenciaController extends Controller
      */
     public function aplicarPadrao(string $dominoCodigo, int|null $ano = null): JsonResponse
     {
-        $this->authorize('PERMITIR_SEQUENCIA_CRIAR');
 
         $ano = $ano ?? now()->year;
 
@@ -252,19 +241,4 @@ class SequenciaController extends Controller
         ]);
     }
 
-    /**
-     * Get user permissions for SEQUENCIA module.
-     */
-    private function getUserModulePermissions(): array
-    {
-        $user = auth()->user();
-
-        return [
-            'pode_visualizar' => $user->can('PERMITIR_SEQUENCIA_VISUALIZAR'),
-            'pode_criar' => $user->can('PERMITIR_SEQUENCIA_CRIAR'),
-            'pode_editar' => $user->can('PERMITIR_SEQUENCIA_EDITAR'),
-            'pode_gerar' => $user->can('PERMITIR_SEQUENCIA_GERAR'),
-            'pode_resetar' => $user->can('PERMITIR_SEQUENCIA_RESETAR'),
-        ];
-    }
 }

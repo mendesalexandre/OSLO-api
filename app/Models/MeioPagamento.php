@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -19,8 +20,10 @@ class MeioPagamento extends Model
     const DELETED_AT = 'data_exclusao';
 
     protected $fillable = [
+        'forma_pagamento_id',
         'nome',
         'descricao',
+        'identificador',
         'taxa_percentual',
         'taxa_fixa',
         'prazo_compensacao',
@@ -38,6 +41,12 @@ class MeioPagamento extends Model
     ];
 
     // Relacionamentos
+
+    public function formaPagamento(): BelongsTo
+    {
+        return $this->belongsTo(FormaPagamento::class);
+    }
+
     public function transacoes(): HasMany
     {
         return $this->hasMany(Transacao::class);

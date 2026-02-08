@@ -53,7 +53,6 @@ class NaturezaController extends Controller
      */
     public function create(Request $request): JsonResponse
     {
-        $this->authorize('PERMITIR_NATUREZA_CRIAR');
 
         $validated = $this->validateNatureza($request);
 
@@ -71,12 +70,10 @@ class NaturezaController extends Controller
      */
     public function show(string $id): JsonResponse
     {
-        $this->authorize('PERMITIR_NATUREZA_VISUALIZAR');
 
         $natureza = $this->findNatureza($id, true);
 
         return $this->successResponse($natureza, [
-            'user_permissions' => $this->getUserModulePermissions(),
             'opcoes_sistema' => $this->getOpcoesSistema()
         ]);
     }
@@ -86,7 +83,6 @@ class NaturezaController extends Controller
      */
     public function update(Request $request, string $id): JsonResponse
     {
-        $this->authorize('PERMITIR_NATUREZA_EDITAR');
 
         $natureza = $this->findNatureza($id);
 
@@ -107,7 +103,6 @@ class NaturezaController extends Controller
      */
     public function destroy(string $id): JsonResponse
     {
-        $this->authorize('PERMITIR_NATUREZA_EXCLUIR');
 
         $natureza = $this->findNatureza($id);
 
@@ -123,7 +118,6 @@ class NaturezaController extends Controller
      */
     public function restore(string $id): JsonResponse
     {
-        $this->authorize('PERMITIR_NATUREZA_RESTAURAR');
 
         $natureza = Natureza::where('id', $id)
             ->whereNotNull('data_exclusao')
@@ -146,7 +140,6 @@ class NaturezaController extends Controller
      */
     public function toggleStatus(string $id): JsonResponse
     {
-        $this->authorize('PERMITIR_NATUREZA_ALTERAR_STATUS');
 
         $natureza = $this->findNatureza($id);
 
@@ -172,7 +165,6 @@ class NaturezaController extends Controller
      */
     public function toggleRegistroAtivo(string $id): JsonResponse
     {
-        $this->authorize('PERMITIR_NATUREZA_ALTERAR_STATUS');
 
         $natureza = $this->findNatureza($id);
 
@@ -195,7 +187,6 @@ class NaturezaController extends Controller
      */
     public function porCategoria(string $categoria): JsonResponse
     {
-        $this->authorize('PERMITIR_NATUREZA_VISUALIZAR');
 
         $naturezas = Natureza::disponivel()
             ->porCategoria($categoria)
@@ -210,7 +201,6 @@ class NaturezaController extends Controller
      */
     public function duplicate(string $id): JsonResponse
     {
-        $this->authorize('PERMITIR_NATUREZA_CRIAR');
 
         $naturezaOriginal = $this->findNatureza($id);
 
@@ -366,22 +356,6 @@ class NaturezaController extends Controller
             'categoria' => $natureza->categoria,
             'user_id' => auth()->id(),
             'user_email' => auth()->user()?->email
-        ];
-    }
-
-    /**
-     * Get user permissions for NATUREZA module.
-     */
-    private function getUserModulePermissions(): array
-    {
-        $user = auth()->user();
-
-        return [
-            'pode_criar' => $user->can('PERMITIR_NATUREZA_CRIAR'),
-            'pode_editar' => $user->can('PERMITIR_NATUREZA_EDITAR'),
-            'pode_excluir' => $user->can('PERMITIR_NATUREZA_EXCLUIR'),
-            'pode_restaurar' => $user->can('PERMITIR_NATUREZA_RESTAURAR'),
-            'pode_alterar_status' => $user->can('PERMITIR_NATUREZA_ALTERAR_STATUS'),
         ];
     }
 

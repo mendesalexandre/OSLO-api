@@ -73,8 +73,6 @@ class TransacaoController extends Controller
     {
         $transacao = Transacao::findOrFail($id);
 
-        $this->authorize('update', $transacao);
-
         $transacao->update($request->validated());
 
         $transacao->load([
@@ -91,8 +89,6 @@ class TransacaoController extends Controller
     public function destroy($id): JsonResponse
     {
         $transacao = Transacao::findOrFail($id);
-
-        $this->authorize('delete', $transacao);
 
         $transacao->delete();
 
@@ -179,8 +175,6 @@ class TransacaoController extends Controller
     {
         $transacao = Transacao::findOrFail($id);
 
-        $this->authorize('cancelar', $transacao);
-
         $transacao->update([
             'status' => TransacaoStatusEnum::CANCELADO
         ]);
@@ -193,8 +187,6 @@ class TransacaoController extends Controller
 
     public function pendentes(): JsonResponse
     {
-        $this->authorize('viewAny', Transacao::class);
-
         $transacoes = Transacao::with([
             'caixa',
             'categoria',
@@ -208,8 +200,6 @@ class TransacaoController extends Controller
 
     public function vencidas(): JsonResponse
     {
-        $this->authorize('viewAny', Transacao::class);
-
         $transacoes = Transacao::with([
             'caixa',
             'categoria',
@@ -223,8 +213,6 @@ class TransacaoController extends Controller
 
     public function contasPagar(): JsonResponse
     {
-        $this->authorize('viewAny', Transacao::class);
-
         $transacoes = Transacao::with([
             'caixa',
             'categoria',
@@ -239,8 +227,6 @@ class TransacaoController extends Controller
 
     public function contasReceber(): JsonResponse
     {
-        $this->authorize('viewAny', Transacao::class);
-
         $transacoes = Transacao::with([
             'caixa',
             'categoria',

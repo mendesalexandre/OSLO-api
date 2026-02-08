@@ -30,16 +30,12 @@ class CategoriaController extends Controller
     {
         $categoria = Categoria::with('transacoes')->findOrFail($id);
 
-        $this->authorize('view', $categoria);
-
         return response()->json($categoria);
     }
 
     public function update(CategoriaRequest $request, $id): JsonResponse
     {
         $categoria = Categoria::findOrFail($id);
-
-        $this->authorize('update', $categoria);
 
         $categoria->update($request->validated());
 
@@ -49,8 +45,6 @@ class CategoriaController extends Controller
     public function destroy($id): JsonResponse
     {
         $categoria = Categoria::findOrFail($id);
-
-        $this->authorize('delete', $categoria);
 
         $categoria->delete();
 

@@ -30,8 +30,6 @@ class CaixaController extends Controller
     {
         $caixa = Caixa::findOrFail($id);
 
-        $this->authorize('update', $caixa);
-
         $caixa->update($request->validated());
 
         return response()->json($caixa);
@@ -40,8 +38,6 @@ class CaixaController extends Controller
     public function destroy($id): JsonResponse
     {
         $caixa = Caixa::findOrFail($id);
-
-        $this->authorize('delete', $caixa);
 
         $caixa->delete();
 

@@ -130,7 +130,7 @@ trait ApiResponseTrait
     /**
      * Collection response.
      */
-    protected function collectionResponse($collection, string $message = null): JsonResponse
+    protected function collectionResponse($collection, ?string $message = null): JsonResponse
     {
         $extra = [];
         if ($message) {

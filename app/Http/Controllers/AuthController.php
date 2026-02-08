@@ -10,11 +10,9 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Exceptions\JWTException;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-
 class AuthController extends Controller
 {
-    use ApiResponseTrait, AuthorizesRequests;
+    use ApiResponseTrait;
 
     public function __construct()
     {
@@ -93,8 +91,8 @@ class AuthController extends Controller
 
         return $this->successResponse([
             'user' => $this->formatUserResponse($user),
-            'permissions' => $user->getAllPermissions()->pluck('name'),
-            'roles' => $user->getRoleNames(),
+            'permissoes' => $user->obterPermissoes(),
+            'modulos' => $user->obterPermissoesPorModulo(),
         ]);
     }
 
@@ -247,6 +245,7 @@ class AuthController extends Controller
             'email_verificado' => !is_null($user->email_verificado_em),
             'data_cadastro' => $user->data_cadastro?->format('Y-m-d H:i:s'),
             'is_ativo' => $user->is_ativo,
+            'grupos' => $user->grupos()->ativos()->pluck('nome')->toArray(),
         ];
     }
 
@@ -266,7 +265,10 @@ class AuthController extends Controller
                 'id' => $user->id,
                 'nome' => $user->nome,
                 'email' => $user->email,
+                'grupos' => $user->grupos()->ativos()->pluck('nome')->toArray(),
             ];
+            $data['permissoes'] = $user->obterPermissoes();
+            $data['modulos'] = $user->obterPermissoesPorModulo();
         }
 
         return $this->successResponse($data, [

@@ -3,25 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Models\Dominio;
-use App\Models\User;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
-use \Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class DominioController extends Controller
 {
-    use ApiResponseTrait, AuthorizesRequests;
+    use ApiResponseTrait;
 
     public function index(Request $request): JsonResponse
     {
-        $user = User::find(1);
-        $permissao = $user->can('PERMITIR_DOMINIO_CRIAR');
-        // dd($permissao);
-        $this->authorize('view', Dominio::class);
-
         $query = Dominio::disponivel()->comAuditoria();
 
         $this->applyFilters($query, $request);
@@ -38,7 +31,6 @@ class DominioController extends Controller
 
     public function create(Request $request): JsonResponse
     {
-        $this->authorize('PERMITIR_DOMINIO_CRIAR');
 
         $validated = $this->validateDominio($request);
 
@@ -53,12 +45,10 @@ class DominioController extends Controller
 
     public function show(string $id): JsonResponse
     {
-        $this->authorize('PERMITIR_DOMINIO_VISUALIZAR');
 
         $dominio = $this->findDominio($id, true);
 
         return $this->successResponse($dominio, [
-            'user_permissions' => $this->getUserModulePermissions(),
             'opcoes_sistema' => $this->getOpcoesSistema()
         ]);
     }
@@ -68,7 +58,6 @@ class DominioController extends Controller
      */
     public function update(Request $request, string $id): JsonResponse
     {
-        $this->authorize('PERMITIR_DOMINIO_EDITAR');
 
         $dominio = $this->findDominio($id);
 
@@ -89,7 +78,6 @@ class DominioController extends Controller
      */
     public function destroy(string $id): JsonResponse
     {
-        $this->authorize('PERMITIR_DOMINIO_EXCLUIR');
 
         $dominio = $this->findDominio($id);
 
@@ -105,7 +93,6 @@ class DominioController extends Controller
      */
     public function restore(string $id): JsonResponse
     {
-        $this->authorize('PERMITIR_DOMINIO_RESTAURAR');
 
         $dominio = Dominio::where('id', $id)
             ->whereNotNull('data_exclusao')
@@ -128,7 +115,6 @@ class DominioController extends Controller
      */
     public function toggleStatus(string $id): JsonResponse
     {
-        $this->authorize('PERMITIR_DOMINIO_ALTERAR_STATUS');
 
         $dominio = $this->findDominio($id);
 
@@ -154,7 +140,6 @@ class DominioController extends Controller
      */
     public function porAtribuicao(string $atribuicao): JsonResponse
     {
-        $this->authorize('PERMITIR_DOMINIO_VISUALIZAR');
 
         $dominios = Dominio::getPorAtribuicao($atribuicao);
 
@@ -166,7 +151,6 @@ class DominioController extends Controller
      */
     public function agrupadoPorAtribuicao(): JsonResponse
     {
-        $this->authorize('PERMITIR_DOMINIO_VISUALIZAR');
 
         $dominios = Dominio::getAgrupadoPorAtribuicao();
 
@@ -178,7 +162,6 @@ class DominioController extends Controller
      */
     public function porTipo(string $tipo): JsonResponse
     {
-        $this->authorize('PERMITIR_DOMINIO_VISUALIZAR');
 
         $dominios = Dominio::disponivel()
             ->porTipo($tipo)
@@ -331,22 +314,6 @@ class DominioController extends Controller
             'atribuicao' => $dominio->atribuicao,
             'user_id' => auth()->id(),
             'user_email' => auth()->user()?->email
-        ];
-    }
-
-    /**
-     * Get user permissions for DOMINIO module.
-     */
-    private function getUserModulePermissions(): array
-    {
-        $user = auth()->user();
-
-        return [
-            'pode_criar' => $user->can('PERMITIR_DOMINIO_CRIAR'),
-            'pode_editar' => $user->can('PERMITIR_DOMINIO_EDITAR'),
-            'pode_excluir' => $user->can('PERMITIR_DOMINIO_EXCLUIR'),
-            'pode_restaurar' => $user->can('PERMITIR_DOMINIO_RESTAURAR'),
-            'pode_alterar_status' => $user->can('PERMITIR_DOMINIO_ALTERAR_STATUS'),
         ];
     }
 

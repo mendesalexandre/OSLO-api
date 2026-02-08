@@ -131,7 +131,7 @@ test('login atualiza ultimo_login_em e ultimo_login_ip', function () {
 // ME (usuário autenticado)
 // ========================================
 
-test('me retorna usuário autenticado com roles e permissions', function () {
+test('me retorna usuário autenticado com permissões', function () {
     $token = auth('api')->login($this->user);
 
     $response = $this->withHeader('Authorization', "Bearer $token")
@@ -141,9 +141,9 @@ test('me retorna usuário autenticado com roles e permissions', function () {
         ->assertJsonStructure([
             'success',
             'data' => [
-                'user' => ['id', 'uuid', 'nome', 'email'],
-                'permissions',
-                'roles',
+                'user' => ['id', 'uuid', 'nome', 'email', 'grupos'],
+                'permissoes',
+                'modulos',
             ],
         ])
         ->assertJson([

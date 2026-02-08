@@ -33,8 +33,6 @@ class CaixaMovimentoController extends Controller
             'transacoes'
         ])->findOrFail($id);
 
-        $this->authorize('view', $movimento);
-
         return response()->json([
             'movimento' => $movimento,
             'resumo' => $movimento->getResumo()
@@ -43,8 +41,6 @@ class CaixaMovimentoController extends Controller
 
     public function abrir(Request $request): JsonResponse
     {
-        $this->authorize('abrir', CaixaMovimento::class);
-
         $validated = $request->validate([
             'caixa_id' => 'required|exists:caixa,id',
             'saldo_inicial_informado' => 'required|numeric|min:0',
@@ -84,8 +80,6 @@ class CaixaMovimentoController extends Controller
     {
         $movimento = CaixaMovimento::findOrFail($id);
 
-        $this->authorize('fechar', $movimento);
-
         if (!$movimento->isAberto()) {
             return response()->json([
                 'error' => 'Este movimento já está fechado'
@@ -118,8 +112,6 @@ class CaixaMovimentoController extends Controller
     {
         $movimento = CaixaMovimento::findOrFail($id);
 
-        $this->authorize('conferir', $movimento);
-
         try {
             $movimento->conferir();
 
@@ -137,8 +129,6 @@ class CaixaMovimentoController extends Controller
     public function reabrir(Request $request, $id): JsonResponse
     {
         $movimento = CaixaMovimento::findOrFail($id);
-
-        $this->authorize('reabrir', $movimento);
 
         $validated = $request->validate([
             'motivo' => 'required|string|max:500',
@@ -160,8 +150,6 @@ class CaixaMovimentoController extends Controller
 
     public function abertos(): JsonResponse
     {
-        $this->authorize('viewAny', CaixaMovimento::class);
-
         $movimentos = CaixaMovimento::with([
             'caixa',
             'usuarioAbertura'
@@ -174,8 +162,6 @@ class CaixaMovimentoController extends Controller
 
     public function fechados(): JsonResponse
     {
-        $this->authorize('viewAny', CaixaMovimento::class);
-
         $movimentos = CaixaMovimento::with([
             'caixa',
             'usuarioAbertura',
@@ -190,8 +176,6 @@ class CaixaMovimentoController extends Controller
 
     public function comDiferenca(): JsonResponse
     {
-        $this->authorize('viewAny', CaixaMovimento::class);
-
         $movimentos = CaixaMovimento::with([
             'caixa',
             'usuarioAbertura',
@@ -206,8 +190,6 @@ class CaixaMovimentoController extends Controller
 
     public function movimentoAtual($caixaId): JsonResponse
     {
-        $this->authorize('viewAny', CaixaMovimento::class);
-
         $caixa = Caixa::findOrFail($caixaId);
         $movimento = $caixa->movimentoAtual();
 

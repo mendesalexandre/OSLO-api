@@ -22,7 +22,6 @@
         "mpdf/mpdf": "^8.2",
         "mpdf/qrcode": "^1.2",
         "rap2hpoutre/fast-excel": "^5.6",
-        "spatie/laravel-permission": "^6.21",
         "tymon/jwt-auth": "^2.1"
     },
     "require-dev": {

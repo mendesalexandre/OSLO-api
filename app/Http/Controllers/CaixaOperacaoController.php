@@ -13,7 +13,6 @@ class CaixaOperacaoController extends Controller
 {
     public function index(): JsonResponse
     {
-        $this->authorize('viewAny', CaixaOperacao::class);
 
         $operacoes = CaixaOperacao::with([
             'caixa',
@@ -35,8 +34,6 @@ class CaixaOperacaoController extends Controller
             'usuario'
         ])->findOrFail($id);
 
-        $this->authorize('view', $operacao);
-
         return response()->json([
             'operacao' => $operacao,
             'resumo' => $operacao->getResumo()
@@ -45,8 +42,6 @@ class CaixaOperacaoController extends Controller
 
     public function sangria(Request $request): JsonResponse
     {
-        $this->authorize('sangria', CaixaOperacao::class);
-
         $validated = $request->validate([
             'caixa_id' => 'required|exists:caixa,id',
             'valor' => 'required|numeric|min:0.01',
@@ -87,8 +82,6 @@ class CaixaOperacaoController extends Controller
 
     public function reforco(Request $request): JsonResponse
     {
-        $this->authorize('reforco', CaixaOperacao::class);
-
         $validated = $request->validate([
             'caixa_id' => 'required|exists:caixa,id',
             'valor' => 'required|numeric|min:0.01',
@@ -120,8 +113,6 @@ class CaixaOperacaoController extends Controller
 
     public function transferir(Request $request): JsonResponse
     {
-        $this->authorize('transferir', CaixaOperacao::class);
-
         $validated = $request->validate([
             'caixa_origem_id' => 'required|exists:caixa,id',
             'caixa_destino_id' => 'required|exists:caixa,id|different:caixa_origem_id',
@@ -207,8 +198,6 @@ class CaixaOperacaoController extends Controller
     {
         $operacao = CaixaOperacao::findOrFail($id);
 
-        $this->authorize('estornar', $operacao);
-
         if (!$operacao->podeSerEstornada()) {
             return response()->json([
                 'error' => 'Esta operação não pode ser estornada. Para transferências, estorne ambas as operações.'
@@ -242,7 +231,6 @@ class CaixaOperacaoController extends Controller
     // Consultas específicas
     public function sangrias(): JsonResponse
     {
-        $this->authorize('viewAny', CaixaOperacao::class);
 
         $operacoes = CaixaOperacao::with(['caixa', 'usuario'])
             ->sangrias()
@@ -254,7 +242,6 @@ class CaixaOperacaoController extends Controller
 
     public function reforcos(): JsonResponse
     {
-        $this->authorize('viewAny', CaixaOperacao::class);
 
         $operacoes = CaixaOperacao::with(['caixa', 'usuario'])
             ->reforcos()
@@ -266,7 +253,6 @@ class CaixaOperacaoController extends Controller
 
     public function transferencias(): JsonResponse
     {
-        $this->authorize('viewAny', CaixaOperacao::class);
 
         $operacoes = CaixaOperacao::with(['caixa', 'caixaDestino', 'usuario'])
             ->transferencias()
@@ -278,7 +264,6 @@ class CaixaOperacaoController extends Controller
 
     public function porCaixa($caixaId): JsonResponse
     {
-        $this->authorize('viewAny', CaixaOperacao::class);
 
         $caixa = Caixa::findOrFail($caixaId);
 

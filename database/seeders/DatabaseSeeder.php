@@ -15,16 +15,14 @@ class DatabaseSeeder extends Seeder
             EtapaSeeder::class,
             UsuarioSeeder::class,
             FeriadoSeeder::class,
-            PermissionSeeder::class,
             DominioSeeder::class,
             EstadoSeeder::class,
             CidadeSeeder::class,
             NaturezaSeeder::class,
             TipoPagamentoSeeder::class,
-            // UsuarioSeeder::class,
             ConfiguracaoDoiSeeder::class,
-            // MeioPagamentoSeeder::class,
-            // TransacaoSeeder::class,
+            PermissaoSeeder::class,
+            GrupoSeeder::class,
         ]);
     }
 }

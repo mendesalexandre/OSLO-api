@@ -28,19 +28,10 @@ return new class extends Migration
             // Índices para melhor performance
             $table->index(['email', 'is_ativo']);
         });
-
-        // Tabela para reset de senha (útil mesmo com Passport)
-        Schema::create('password_reset_tokens', function (Blueprint $table) {
-            $table->string('email')->primary();
-            $table->string('token');
-            $table->timestamp('created_at')->nullable();
-        });
     }
-
 
     public function down(): void
     {
         Schema::dropIfExists('usuario');
-        Schema::dropIfExists('password_reset_tokens');
     }
 };
